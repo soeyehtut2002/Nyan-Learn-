@@ -19,6 +19,7 @@ import { CourseData, LessonContent } from '../../../types/course.types';
 import { useProgress } from '../../../context/ProgressContext';
 import { VisualDiagram } from './VisualDiagram';
 import { InteractiveActivity } from './InteractiveActivity';
+import { ByteMascot } from './ByteMascot';
 
 interface LessonViewProps {
   course: CourseData;
@@ -194,7 +195,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
 
         {/* 4. EDUCATIONAL VISUAL DIAGRAM */}
         {lesson.diagram && (
-          <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-line, #e3e7f8)' }}>
+          <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1.5px solid var(--border-line, #e3e7f8)' }}>
             <div style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--ink-secondary, #585d82)', letterSpacing: '0.05em', marginBottom: '8px' }}>
               {language === 'my' ? 'သင်ထောက်ကူ ပုံပြကားချပ်:' : 'Visual Diagram:'}
             </div>
@@ -206,21 +207,24 @@ export const LessonView: React.FC<LessonViewProps> = ({
       {/* 5. REAL-LIFE ANALOGY */}
       {analogy && (
         <section className="analogy-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#fef08a', color: '#854d0e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Lightbulb className="w-5 h-5" />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#fef08a', color: '#854d0e', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 8px rgba(234, 179, 8, 0.25)' }}>
+                <Lightbulb className="w-5 h-5" />
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#b45309' }}>
+                  {language === 'my' ? '📖 ပုံပြင်ဥပမာဖြင့် နားလည်ခြင်း' : '📖 Real-Life Story Analogy'}
+                </span>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#78350f', margin: '2px 0' }}>
+                  {analogy.title}
+                </h3>
+              </div>
             </div>
-            <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {language === 'my' ? 'နေ့စဉ်ဘဝ ဥပမာဖြင့် နားလည်ခြင်း' : 'Real-Life Analogy'}
-              </span>
-              <h3 style={{ fontSize: '17px', fontWeight: 800, margin: '2px 0' }}>
-                {analogy.title}
-              </h3>
-            </div>
+            <ByteMascot mood="thinking" size={56} />
           </div>
 
-          <p style={{ fontSize: '14.5px', lineHeight: 1.65, color: '#78350f' }}>
+          <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#78350f', margin: 0 }}>
             {analogy.description}
           </p>
         </section>
@@ -228,38 +232,69 @@ export const LessonView: React.FC<LessonViewProps> = ({
 
       {/* 6. WORKED EXAMPLE */}
       {workedExample && (
-        <section className="worked-example-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--cyan-light, #e4f9fc)', color: 'var(--cyan, #22c7d9)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <ListOrdered className="w-5 h-5" />
+        <section className="worked-example-card" style={{ border: '2px solid #bae6fd', borderRadius: '24px', padding: '24px', boxShadow: '0 8px 24px rgba(14, 165, 233, 0.08)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--cyan-light, #e4f9fc)', color: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 8px rgba(6, 182, 212, 0.2)' }}>
+                <ListOrdered className="w-5 h-5" />
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#0284c7', letterSpacing: '0.05em' }}>
+                  {language === 'my' ? '🤖 လက်တွေ့ဥပမာ (လိုက်လုပ်ကြည့်ပါ)' : '🤖 Follow-Along Worked Example'}
+                </span>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--ink, #1e2448)', margin: '2px 0' }}>
+                  {workedExample.title}
+                </h3>
+              </div>
             </div>
-            <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#0891b2', letterSpacing: '0.05em' }}>
-                {language === 'my' ? 'လက်တွေ့ဥပမာ' : 'Worked Example'}
-              </span>
-              <h3 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--ink, #1e2448)', margin: '2px 0' }}>
-                {workedExample.title}
-              </h3>
-            </div>
+            <ByteMascot mood="coder" size={56} />
           </div>
 
-          <p style={{ fontSize: '14px', color: 'var(--ink-secondary, #585d82)', marginBottom: '8px' }}>
+          <p style={{ fontSize: '14.5px', color: '#475569', marginBottom: '14px', lineHeight: 1.6 }}>
             {workedExample.scenario}
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {workedExample.steps.map((st) => (
-              <div key={st.stepNumber} className="worked-step-row">
+              <div
+                key={st.stepNumber}
+                style={{
+                  background: '#f8fafc',
+                  border: '1.5px solid #e2e8f0',
+                  borderRadius: '16px',
+                  padding: '14px 18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '16px',
+                  flexWrap: 'wrap',
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--cyan-light, #e4f9fc)', color: '#0891b2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800, flexShrink: 0 }}>
+                  <span
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '10px',
+                      background: 'linear-gradient(135deg, #38bdf8, #0284c7)',
+                      color: '#ffffff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '13px',
+                      fontWeight: 800,
+                      flexShrink: 0,
+                      boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)',
+                    }}
+                  >
                     {st.stepNumber}
                   </span>
-                  <div style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--ink, #1e2448)' }}>
+                  <div style={{ fontSize: '14.5px', fontWeight: 700, color: 'var(--ink, #1e2448)', fontFamily: 'monospace' }}>
                     {st.instruction}
                   </div>
                 </div>
 
-                <div style={{ fontSize: '12.5px', color: 'var(--ink-secondary, #585d82)' }}>
+                <div style={{ fontSize: '13px', color: '#0369a1', background: '#e0f2fe', padding: '6px 12px', borderRadius: '10px', fontWeight: 600 }}>
                   💡 {st.outcome}
                 </div>
               </div>
@@ -400,32 +435,34 @@ export const LessonView: React.FC<LessonViewProps> = ({
         </div>
 
         {/* Quiz Action Buttons */}
-        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-line, #e3e7f8)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1.5px solid var(--border-line, #e3e7f8)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           {!quizSubmitted ? (
             <button
               onClick={handleSubmitQuiz}
               disabled={Object.keys(selectedAnswers).length < lesson.quizQuestions.length}
-              className="course-cta-btn"
-              style={{ padding: '10px 24px', fontSize: '14px' }}
+              className="kid-btn kid-btn-primary"
+              style={{
+                opacity: Object.keys(selectedAnswers).length < lesson.quizQuestions.length ? 0.45 : 1,
+                cursor: Object.keys(selectedAnswers).length < lesson.quizQuestions.length ? 'not-allowed' : 'pointer',
+              }}
             >
               <Award className="w-4 h-4" />
-              <span>{language === 'my' ? 'အဖြေများ စစ်ဆေးမည်' : 'Submit Answers'}</span>
+              <span>{language === 'my' ? '🚀 အဖြေများ စစ်ဆေးမည်' : '🚀 Submit Answers'}</span>
             </button>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
               <button
                 onClick={handleRetryQuiz}
-                className="back-link"
-                style={{ padding: '8px 16px', background: '#f1f5f9', borderRadius: '10px', marginBottom: 0 }}
+                className="kid-btn kid-btn-secondary"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>{language === 'my' ? 'ထပ်မံကြိုးစားမည်' : 'Retry Quiz'}</span>
               </button>
 
               {scorePercentage !== null && scorePercentage >= 70 && (
-                <span style={{ fontSize: '13px', fontWeight: 800, color: '#15803d', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 800, color: '#15803d', display: 'flex', alignItems: 'center', gap: '6px', background: '#dcfce7', padding: '6px 14px', borderRadius: '12px', border: '1px solid #86efac' }}>
                   <Sparkles className="w-4 h-4" />
-                  +30 XP Earned!
+                  +30 XP Earned! 🎉
                 </span>
               )}
             </div>
@@ -435,16 +472,16 @@ export const LessonView: React.FC<LessonViewProps> = ({
 
       {/* 11. SHORT LESSON SUMMARY */}
       <section className="lesson-card-box">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
           <Sparkles className="w-5 h-5" style={{ color: 'var(--purple-main, #6c47ff)' }} />
-          <h3 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--ink, #1e2448)' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--ink, #1e2448)', margin: 0 }}>
             {language === 'my' ? 'သင်ခန်းစာ အနှစ်ချုပ်' : 'Lesson Summary'}
           </h3>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px', color: 'var(--ink-secondary, #585d82)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14.5px', color: 'var(--ink, #1e2448)', lineHeight: 1.6 }}>
           {summary.map((point, idx) => (
-            <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-              <span style={{ color: 'var(--purple-main, #6c47ff)', fontWeight: 800 }}>•</span>
+            <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: '#f8fafc', padding: '10px 14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <span style={{ color: 'var(--purple-main, #6c47ff)', fontWeight: 800 }}>✓</span>
               <span>{point}</span>
             </div>
           ))}
@@ -452,12 +489,11 @@ export const LessonView: React.FC<LessonViewProps> = ({
       </section>
 
       {/* 12. PREVIOUS / NEXT LESSON NAVIGATION */}
-      <footer style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', paddingTop: '16px', borderTop: '1px solid var(--border-line, #e3e7f8)' }}>
+      <footer style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', paddingTop: '18px', borderTop: '1.5px solid var(--border-line, #e3e7f8)' }}>
         {prevLesson ? (
           <button
             onClick={() => onNavigateLesson(prevLesson.id)}
-            className="back-link"
-            style={{ padding: '8px 16px', background: '#ffffff', border: '1px solid var(--border-line, #e3e7f8)', borderRadius: '12px', marginBottom: 0 }}
+            className="kid-btn kid-btn-secondary"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>
@@ -472,8 +508,8 @@ export const LessonView: React.FC<LessonViewProps> = ({
         {nextLesson ? (
           <button
             onClick={() => onNavigateLesson(nextLesson.id)}
-            className="course-cta-btn"
-            style={{ padding: '10px 20px', fontSize: '13px', marginLeft: 'auto' }}
+            className="kid-btn kid-btn-primary"
+            style={{ marginLeft: 'auto' }}
           >
             <span>
               {language === 'my' ? 'နောက်သင်ခန်းစာ' : 'Next'}:{' '}
@@ -484,8 +520,8 @@ export const LessonView: React.FC<LessonViewProps> = ({
         ) : (
           <button
             onClick={onNavigateCourseReview}
-            className="course-cta-btn"
-            style={{ background: 'linear-gradient(90deg, #10b981, #06b6d4)', padding: '10px 22px', fontSize: '13.5px', marginLeft: 'auto' }}
+            className="kid-btn kid-btn-success"
+            style={{ marginLeft: 'auto' }}
           >
             <Award className="w-4 h-4" />
             <span>

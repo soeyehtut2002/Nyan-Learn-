@@ -3,14 +3,13 @@ import {
   CheckCircle2,
   XCircle,
   RotateCcw,
-  Sparkles,
   AlertTriangle,
-  Lightbulb,
   Lock,
   Zap,
 } from './Icons';
 import { InteractiveActivityData } from '../../../types/course.types';
 import { CodePlayground } from './CodePlayground';
+import { ByteMascot, MascotSpeech } from './ByteMascot';
 
 interface InteractiveActivityProps {
   activity: InteractiveActivityData;
@@ -124,7 +123,7 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
     } else {
       setErrorFeedback(
         language === 'my'
-          ? 'အစီအစဉ် မမှန်သေးပါ။ အဆင့်များကို သေချာပြန်စီစဉ်ကြည့်ပါ!'
+          ? 'အစီအစဉ် မမှန်သေးပါ။ အဆင့်များကို သေချာပြန်စီစဉ်ကြည့်ပါဦး!'
           : 'Order is not quite right yet. Re-read the steps and try again!'
       );
     }
@@ -208,93 +207,111 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-2xl p-5 md:p-6 shadow-xl my-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-indigo-500/20 mb-5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-300">
-            <Zap className="w-5 h-5 text-indigo-400" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
-                {language === 'my' ? 'လက်တွေ့လေ့ကျင့်ခန်း' : 'Interactive Practice Task'}
-              </span>
-              {completed && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/40">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  {language === 'my' ? 'ပြီးမြောက်သည်' : 'Completed!'}
-                </span>
-              )}
-            </div>
-            <h4 className="text-base md:text-lg font-bold text-white">
-              {title}
-            </h4>
-          </div>
+    <div className="kid-activity-wrapper">
+      {/* Top Header with Badge and Reset Button */}
+      <div className="kid-activity-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span className="kid-pill-badge">
+            <Zap className="w-4 h-4" />
+            {language === 'my' ? 'လက်တွေ့ကစားနည်း မစ်ရှင်' : 'Interactive Mission'}
+          </span>
+          {completed && (
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: '#dcfce7',
+                color: '#15803d',
+                fontSize: '12px',
+                fontWeight: 800,
+                padding: '4px 12px',
+                borderRadius: '9999px',
+                border: '1.5px solid #86efac',
+              }}
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              {language === 'my' ? 'ပြီးမြောက်သည် 🎉' : 'Mission Completed! 🎉'}
+            </span>
+          )}
         </div>
 
         <button
           onClick={handleReset}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium border border-slate-700 transition-all"
+          className="kid-btn kid-btn-secondary"
+          title="Reset Activity"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          {language === 'my' ? 'ပြန်စမည်' : 'Reset'}
+          <span>{language === 'my' ? 'ပြန်လည်စတင်မည်' : 'Start Over'}</span>
         </button>
       </div>
 
-      {/* Instructions */}
-      <div className="mb-5 bg-indigo-950/40 border border-indigo-500/20 rounded-xl p-3.5 text-sm text-indigo-200/90 flex items-start gap-2.5">
-        <Lightbulb className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-        <div>
-          <strong className="text-amber-300">
-            {language === 'my' ? 'လုပ်ဆောင်ရမည့်အချက်:' : 'Instructions:'}
-          </strong>{' '}
-          {instructions}
-        </div>
-      </div>
+      {/* Mascot Speech Bubble with friendly instructions */}
+      <MascotSpeech
+        mood={completed ? 'success' : errorFeedback ? 'thinking' : 'happy'}
+        badge={language === 'my' ? 'စက်ရုပ် Byte ၏ မစ်ရှင်' : "Byte's Robot Mission"}
+        title={title}
+        message={instructions}
+        size={84}
+      />
 
-      {/* Error / Alert */}
+      {/* Error / Alert notification */}
       {errorFeedback && (
-        <div className="mb-4 bg-rose-950/60 border border-rose-500/40 rounded-xl p-3 text-sm text-rose-200 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div
+          style={{
+            background: '#fef2f2',
+            border: '2px solid #fca5a5',
+            borderRadius: '16px',
+            padding: '12px 16px',
+            color: '#b91c1c',
+            fontSize: '13.5px',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            marginBottom: '18px',
+          }}
+        >
+          <AlertTriangle className="w-5 h-5" style={{ color: '#ef4444', flexShrink: 0 }} />
           <span>{errorFeedback}</span>
         </div>
       )}
 
-      {/* TYPE 1: SEQUENCE SORTER */}
+      {/* =========================================================================
+          TYPE 1: SEQUENCE SORTER (Step-by-step ordering)
+          ========================================================================= */}
       {activity.type === 'sequence-sorter' && (
-        <div className="space-y-4">
-          <div className="space-y-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {sequenceItems.map((item, idx) => (
               <div
                 key={idx}
-                className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
-                  completed
-                    ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-200'
-                    : 'bg-slate-800/80 border-slate-700 text-slate-200 hover:border-indigo-500/50'
-                }`}
+                className={`sequence-step-card ${completed ? 'completed' : ''}`}
               >
-                <div className="flex items-center gap-3">
-                  <span className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs font-bold font-mono">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
+                  <span className={`step-num-badge ${completed ? 'completed' : ''}`}>
                     {idx + 1}
                   </span>
-                  <span className="text-sm font-medium">{getItemLabel(item)}</span>
+                  <span style={{ fontSize: '14.5px', fontWeight: 700, color: '#1e2448', lineHeight: 1.4 }}>
+                    {getItemLabel(item)}
+                  </span>
                 </div>
+
                 {!completed && (
-                  <div className="flex items-center gap-1">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                     <button
                       onClick={() => moveSequenceItem(idx, 'up')}
                       disabled={idx === 0}
-                      className="px-2.5 py-1 text-xs bg-slate-700 hover:bg-indigo-600 disabled:opacity-30 text-white rounded transition-colors"
-                      title="Move up"
+                      className="step-arrow-btn up"
+                      title={language === 'my' ? 'အပေါ်သို့ ရွှေ့မည်' : 'Move Up'}
                     >
                       ▲
                     </button>
                     <button
                       onClick={() => moveSequenceItem(idx, 'down')}
                       disabled={idx === sequenceItems.length - 1}
-                      className="px-2.5 py-1 text-xs bg-slate-700 hover:bg-indigo-600 disabled:opacity-30 text-white rounded transition-colors"
-                      title="Move down"
+                      className="step-arrow-btn down"
+                      title={language === 'my' ? 'အောက်သို့ ရွှေ့မည်' : 'Move Down'}
                     >
                       ▼
                     </button>
@@ -305,39 +322,67 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
           </div>
 
           {!completed && (
-            <button
-              onClick={checkSequence}
-              className="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white rounded-xl font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              {language === 'my' ? 'အဖြေစစ်ဆေးမည်' : 'Check Order'}
-            </button>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px' }}>
+              <button
+                onClick={checkSequence}
+                className="kid-btn kid-btn-primary"
+                style={{ width: '100%', maxWidth: '340px' }}
+              >
+                <CheckCircle2 className="w-5 h-5" />
+                <span>{language === 'my' ? '✨ အဖြေစစ်ဆေးမည်' : '✨ Check Order'}</span>
+              </button>
+            </div>
           )}
         </div>
       )}
 
-      {/* TYPE 2: CLASSIFICATION SORTER */}
+      {/* =========================================================================
+          TYPE 2: CLASSIFICATION SORTER
+          ========================================================================= */}
       {activity.type === 'classification-sorter' && (
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           {/* Unassigned items pool */}
           {unassignedItems.length > 0 && (
-            <div className="p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
+            <div
+              style={{
+                background: '#f8fafc',
+                border: '2px solid #e2e8f0',
+                borderRadius: '20px',
+                padding: '16px',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  color: '#475569',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  display: 'block',
+                  marginBottom: '10px',
+                }}
+              >
                 {language === 'my' ? 'ခွဲခြားရမည့် အချက်များ (နှိပ်၍ အကွက်ရွေးပါ):' : 'Items to Classify (Click to assign):'}
               </span>
-              <div className="flex flex-wrap gap-2">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {unassignedItems.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-1.5 bg-slate-700/80 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                  >
+                  <div key={idx} className="kid-chip-item">
                     <span>{getItemLabel(item)}</span>
-                    <div className="flex gap-1 ml-1 pl-1 border-l border-slate-600">
+                    <div style={{ display: 'flex', gap: '4px', marginLeft: '6px', paddingLeft: '6px', borderLeft: '1.5px solid #cbd5e1' }}>
                       {categories.map((cat) => (
                         <button
                           key={cat}
                           onClick={() => assignCategory(item, cat)}
-                          className="px-1.5 py-0.5 text-[10px] bg-slate-900/60 hover:bg-indigo-500 rounded text-slate-200 transition-colors uppercase font-mono"
+                          style={{
+                            background: '#e0e7ff',
+                            border: 'none',
+                            color: '#4338ca',
+                            fontSize: '11px',
+                            fontWeight: 800,
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                          }}
                           title={`Sort to ${cat}`}
                         >
                           → {cat}
@@ -351,34 +396,43 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
           )}
 
           {/* Categories Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
             {categories.map((cat) => (
-              <div
-                key={cat}
-                className="bg-slate-850 border border-slate-700/80 rounded-xl p-3.5 min-h-[130px] flex flex-col"
-              >
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-700/60">
-                  <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5 font-mono">
-                    📂 {cat}
+              <div key={cat} className="kid-category-box">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '8px', marginBottom: '10px', borderBottom: '1.5px solid #f1f5f9' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: '#4f46e5', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    📦 {cat}
                   </span>
-                  <span className="text-[11px] text-slate-400">
-                    {(assignedMap[cat] || []).length}
+                  <span style={{ fontSize: '11.5px', fontWeight: 800, background: '#e0e7ff', color: '#4338ca', padding: '2px 8px', borderRadius: '9999px' }}>
+                    {(assignedMap[cat] || []).length} items
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-2 flex-1 items-start">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', flex: 1, alignItems: 'flex-start' }}>
                   {(assignedMap[cat] || []).length === 0 ? (
-                    <span className="text-xs text-slate-500 italic p-1">
-                      {language === 'my' ? 'ဒီနေရာသို့ ထည့်ပါ' : 'Assign items here'}
+                    <span style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic', padding: '6px 0' }}>
+                      {language === 'my' ? 'ဤနေရာသို့ ထည့်ပါ' : 'Drop items here'}
                     </span>
                   ) : (
                     assignedMap[cat].map((item, itemIdx) => (
                       <span
                         key={itemIdx}
                         onClick={() => unassignCategory(item, cat)}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-950/70 border border-indigo-500/40 text-indigo-200 cursor-pointer hover:border-rose-400 hover:text-rose-300 transition-colors"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '6px 12px',
+                          borderRadius: '10px',
+                          fontSize: '12.5px',
+                          fontWeight: 700,
+                          background: '#eef2ff',
+                          border: '1.5px solid #c7d2fe',
+                          color: '#3730a3',
+                          cursor: 'pointer',
+                        }}
                         title="Click to remove"
                       >
-                        {getItemLabel(item)} <XCircle className="w-3 h-3 text-slate-400" />
+                        {getItemLabel(item)} <XCircle className="w-3.5 h-3.5" style={{ color: '#94a3b8' }} />
                       </span>
                     ))
                   )}
@@ -388,18 +442,23 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
           </div>
 
           {!completed && (
-            <button
-              onClick={checkClassification}
-              className="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white rounded-xl font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              {language === 'my' ? 'အဖြေစစ်ဆေးမည်' : 'Check Classification'}
-            </button>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '6px' }}>
+              <button
+                onClick={checkClassification}
+                className="kid-btn kid-btn-primary"
+                style={{ width: '100%', maxWidth: '340px' }}
+              >
+                <CheckCircle2 className="w-5 h-5" />
+                <span>{language === 'my' ? '✨ အဖြေစစ်ဆေးမည်' : '✨ Check Classification'}</span>
+              </button>
+            </div>
           )}
         </div>
       )}
 
-      {/* TYPE 3: CODE SANDBOX */}
+      {/* =========================================================================
+          TYPE 3: CODE SANDBOX (HTML/CSS/JS Playground)
+          ========================================================================= */}
       {activity.type === 'code-sandbox' && (
         <CodePlayground
           initialHtml={activity.initialData?.html}
@@ -410,10 +469,12 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
         />
       )}
 
-      {/* TYPE 4: PASSWORD CHECKER */}
+      {/* =========================================================================
+          TYPE 4: PASSWORD CHECKER (Interactive Robot Cyber Shield)
+          ========================================================================= */}
       {activity.type === 'password-checker' && (
-        <div className="space-y-4">
-          <div className="relative">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ position: 'relative' }}>
             <input
               type="text"
               value={passwordInput}
@@ -429,10 +490,22 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
                   ? 'စမ်းသပ်စကားဝှက် ရိုက်ထည့်ကြည့်ပါ (ဥပမာ- BlueElephant#2026)'
                   : 'Type a practice passphrase (e.g., PurpleTurtle#Jump2026!)'
               }
-              className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm outline-none focus:border-indigo-500 font-mono"
+              style={{
+                width: '100%',
+                padding: '14px 18px',
+                background: '#ffffff',
+                border: '2px solid #818cf8',
+                borderRadius: '16px',
+                fontSize: '15px',
+                fontWeight: 700,
+                color: '#1e2448',
+                outline: 'none',
+                fontFamily: 'monospace',
+                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.1)',
+              }}
             />
-            <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
-              <Lock className="w-3 h-3 text-amber-400" />
+            <div style={{ fontSize: '11.5px', color: '#64748b', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Lock className="w-3.5 h-3.5" style={{ color: '#f59e0b' }} />
               <span>
                 {language === 'my'
                   ? '⚠️ လုံခြုံရေးအတွက် သင်၏ တကယ့်အစစ်အမှန် စကားဝှက်ကို မထည့်ပါနှင့်။'
@@ -441,55 +514,66 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
             </div>
           </div>
 
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span className="text-slate-400">
-                {language === 'my' ? 'စကားဝှက် ခိုင်မာမှု:' : 'Password Strength:'}
+          {/* Interactive Shield Energy Meter */}
+          <div style={{ background: '#ffffff', border: '2px solid #e0e7ff', borderRadius: '18px', padding: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: '#334155' }}>
+                {language === 'my' ? '🛡️ Byte ၏ ဒိုင်းကာစွမ်းအင်:' : "🛡️ Byte's Shield Energy:"}
               </span>
               <span
-                className={`font-bold ${
-                  passScore < 40
-                    ? 'text-rose-400'
-                    : passScore < 80
-                    ? 'text-amber-400'
-                    : 'text-emerald-400'
-                }`}
+                style={{
+                  fontSize: '13.5px',
+                  fontWeight: 800,
+                  color: passScore < 40 ? '#ef4444' : passScore < 80 ? '#f59e0b' : '#10b981',
+                }}
               >
                 {passScore}% -{' '}
                 {passScore < 40
-                  ? language === 'my'
-                    ? 'အားနည်းလွန်းသည်'
-                    : 'Weak'
+                  ? (language === 'my' ? '😴 အားနည်းလွန်းသည်' : '😴 Weak')
                   : passScore < 80
-                  ? language === 'my'
-                    ? 'အသင့်အတင့်'
-                    : 'Medium'
-                  : language === 'my'
-                  ? 'အလွန်ခိုင်မာသည်!'
-                  : 'Strong & Safe!'}
+                  ? (language === 'my' ? '⚡ အသင့်အတင့်' : '⚡ Getting Stronger')
+                  : (language === 'my' ? '🛡️ စူပါဒိုင်းကာ အပြည့်! 🎉' : '🛡️ Super Strong! 🎉')}
               </span>
             </div>
-            <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+
+            <div style={{ width: '100%', height: '14px', background: '#e2e8f0', borderRadius: '9999px', overflow: 'hidden' }}>
               <div
-                className={`h-full transition-all duration-300 rounded-full ${
-                  passScore < 40
-                    ? 'bg-rose-500'
-                    : passScore < 80
-                    ? 'bg-amber-500'
-                    : 'bg-emerald-500'
-                }`}
-                style={{ width: `${passScore}%` }}
+                style={{
+                  width: `${passScore}%`,
+                  height: '100%',
+                  background:
+                    passScore < 40
+                      ? 'linear-gradient(90deg, #f87171, #ef4444)'
+                      : passScore < 80
+                      ? 'linear-gradient(90deg, #fde047, #f59e0b)'
+                      : 'linear-gradient(90deg, #34d399, #10b981)',
+                  borderRadius: '9999px',
+                  transition: 'width 0.3s ease',
+                }}
               />
             </div>
           </div>
         </div>
       )}
 
-      {/* TYPE 5: CONDITION TESTER */}
+      {/* =========================================================================
+          TYPE 5: CONDITION TESTER (IF/ELSE Visual Toggle)
+          ========================================================================= */}
       {activity.type === 'condition-tester' && (
-        <div className="space-y-4">
-          <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 space-y-2">
-            <div className="text-indigo-400 font-bold">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div
+            style={{
+              background: '#0f172a',
+              borderRadius: '20px',
+              padding: '20px',
+              border: '2px solid #334155',
+              fontFamily: 'monospace',
+              fontSize: '13.5px',
+              color: '#e2e8f0',
+              lineHeight: 1.8,
+            }}
+          >
+            <div style={{ color: '#38bdf8', fontWeight: 800, marginBottom: '8px' }}>
               // {language === 'my' ? 'အခြေအနေစမ်းသပ်မှု' : 'Condition Simulator'}
             </div>
             <div>
@@ -501,51 +585,62 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
                   setCompleted(true);
                   onCompleted?.();
                 }}
-                className={`px-3 py-1 rounded font-bold transition-all ${
-                  conditionToggle
-                    ? 'bg-cyan-500 text-slate-950 hover:bg-cyan-400'
-                    : 'bg-slate-750 text-slate-400 hover:bg-slate-700'
-                }`}
+                className={`kid-btn ${conditionToggle ? 'kid-btn-primary' : 'kid-btn-secondary'}`}
+                style={{ padding: '4px 14px', fontSize: '13px', borderRadius: '10px' }}
               >
-                {conditionToggle ? 'true' : 'false'} (Click to toggle)
+                {conditionToggle ? '🌧️ true' : '☀️ false'} (Click to toggle)
               </button>
               ;
             </div>
             <div>if (isRaining) &#123;</div>
             <div
-              className={`pl-4 py-1 rounded transition-colors ${
-                conditionToggle ? 'bg-cyan-950/60 text-cyan-300 font-bold' : 'text-slate-500'
-              }`}
+              style={{
+                paddingLeft: '24px',
+                color: conditionToggle ? '#67e8f9' : '#64748b',
+                fontWeight: conditionToggle ? 800 : 500,
+                background: conditionToggle ? 'rgba(6, 182, 212, 0.15)' : 'transparent',
+                borderRadius: '8px',
+                paddingTop: '2px',
+                paddingBottom: '2px',
+              }}
             >
-              takeUmbrella(); // ☔️ Raincoat and umbrella
+              takeUmbrella(); // ☔️ Raincoat & umbrella on!
             </div>
             <div>&#125; else &#123;</div>
             <div
-              className={`pl-4 py-1 rounded transition-colors ${
-                !conditionToggle ? 'bg-amber-950/60 text-amber-300 font-bold' : 'text-slate-500'
-              }`}
+              style={{
+                paddingLeft: '24px',
+                color: !conditionToggle ? '#fde047' : '#64748b',
+                fontWeight: !conditionToggle ? 800 : 500,
+                background: !conditionToggle ? 'rgba(234, 179, 8, 0.15)' : 'transparent',
+                borderRadius: '8px',
+                paddingTop: '2px',
+                paddingBottom: '2px',
+              }}
             >
-              wearSunglasses(); // 🕶️ Sunny hat and sunglasses
+              wearSunglasses(); // 🕶️ Sunny hat & sunglasses on!
             </div>
             <div>&#125;</div>
           </div>
         </div>
       )}
 
-      {/* Success Banner */}
+      {/* =========================================================================
+          SUCCESS CELEBRATION BOX
+          ========================================================================= */}
       {completed && (
-        <div className="mt-4 bg-emerald-950/60 border border-emerald-500/50 rounded-xl p-3.5 text-xs md:text-sm text-emerald-200 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-400 shrink-0" />
-            <span>
+        <div className="celebration-box">
+          <ByteMascot mood="success" size={72} />
+          <div>
+            <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#065f46', margin: '0 0 4px 0' }}>
+              {language === 'my' ? '🎉 သာဓုပါ! မစ်ရှင် အောင်မြင်သွားပါပြီ!' : '🎉 Awesome Job! Mission Completed!'}
+            </h4>
+            <p style={{ fontSize: '13px', color: '#047857', margin: 0, fontWeight: 600 }}>
               {language === 'my'
-                ? '🎉 သာဓုပါ! သင်သည် ဤလက်တွေ့လေ့ကျင့်ခန်းကို အောင်မြင်စွာ လုပ်ဆောင်ပြီးပါပြီ!'
-                : '🎉 Excellent work! You successfully completed this interactive practice!'}
-            </span>
+                ? 'စက်ရုပ် Byte က သင့်ကို ဂုဏ်ယူနေပါတယ်! အောက်ပါ မေးခွန်းများကို ဆက်လက်ဖြေဆိုကြည့်ရအောင်။'
+                : 'Byte is super proud of you! Keep going to test your skills in the quiz below.'}
+            </p>
           </div>
-          <span className="text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 px-2 py-0.5 rounded text-emerald-300">
-            Active
-          </span>
         </div>
       )}
     </div>
