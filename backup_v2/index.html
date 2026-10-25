@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeQuest — AI & Coding Adventure for Kids</title>
+  <meta name="description" content="CodeQuest is a fun, child-safe, interactive coding and AI learning platform for children, supporting both Burmese and English.">
+  
+  <!-- Modern Child-Friendly Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+Myanmar:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Top Header Bar -->
+    <header class="top-header">
+      <div class="brand-wrapper">
+        <div class="brand-logo" aria-hidden="true">✦</div>
+        <div class="brand-text">
+          <h1>CodeQuest<span>.</span></h1>
+          <div class="brand-tagline" data-en="AI &amp; Coding Adventure" data-my="AI &amp; Coding စွန့်စားခန်း">AI &amp; Coding စွန့်စားခန်း</div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <span class="pill safety-pill" title="Child Safe Environment">
+          🛡️ <span data-en="100% Kid-Safe" data-my="ကလေးများအတွက် လုံခြုံမှုရှိ">ကလေးများအတွက် လုံခြုံမှုရှိ</span>
+        </span>
+
+        <span class="pill xp-pill" aria-label="Experience Points">
+          ⚡ <strong id="topXP">0</strong> XP
+        </span>
+
+        <!-- Gentle Sound Toggle -->
+        <button id="soundToggleBtn" class="icon-btn" aria-label="Toggle Sound Effects" title="Sound Effects">
+          🔊
+        </button>
+
+        <!-- Bilingual Switcher -->
+        <button class="lang-btn" id="langBtn" aria-label="Change language between Burmese and English">
+          🌐 <span id="langBtnText">English</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Application Layout -->
+    <div class="main-layout">
+      <!-- Navigation Sidebar -->
+      <aside class="sidebar" aria-label="Main Navigation">
+        <nav class="nav-group">
+          <button class="nav-btn active" data-page="home">
+            <span class="ico">🏡</span>
+            <span data-en="Adventure Home" data-my="စွန့်စားခန်း">စွန့်စားခန်း</span>
+          </button>
+          <button class="nav-btn" data-page="coding">
+            <span class="ico">🤖</span>
+            <span data-en="Robot Maze" data-my="Coding ဂိမ်း">Coding ဂိမ်း</span>
+          </button>
+          <button class="nav-btn" data-page="quiz">
+            <span class="ico">🧠</span>
+            <span data-en="Brain Quiz" data-my="ဉာဏ်စမ်း Quiz">ဉာဏ်စမ်း Quiz</span>
+          </button>
+          <button class="nav-btn" data-page="ai">
+            <span class="ico">✨</span>
+            <span data-en="AI Detective Lab" data-my="AI စမ်းသပ်ခန်း">AI စမ်းသပ်ခန်း</span>
+          </button>
+          <button class="nav-btn" data-page="rewards">
+            <span class="ico">🏆</span>
+            <span data-en="My Rewards" data-my="ဆုတံဆိပ်များ">ဆုတံဆိပ်များ</span>
+          </button>
+          <button class="nav-btn" data-page="path">
+            <span class="ico">🗺️</span>
+            <span data-en="Learning Path" data-my="သင်ယူမှုလမ်းကြောင်း">သင်ယူမှုလမ်းကြောင်း</span>
+          </button>
+          <button class="nav-btn" data-page="builder">
+            <span class="ico">🧱</span>
+            <span data-en="Code Builder" data-my="Code တည်ဆောက်ရန်">Code တည်ဆောက်ရန်</span>
+          </button>
+          <button class="nav-btn" data-page="tutor">
+            <span class="ico">💬</span>
+            <span data-en="AI Tutor" data-my="AI ဆရာ">AI ဆရာ</span>
+          </button>
+          <button class="nav-btn" data-page="parent">
+            <span class="ico">👨‍👩‍👧</span>
+            <span data-en="Parent Zone" data-my="မိဘအပိုင်း">မိဘအပိုင်း</span>
+          </button>
+        </nav>
+
+        <div class="side-tip">
+          🛡️ <strong data-en="Safe Learning" data-my="လုံခြုံစွာ သင်ယူပါ">လုံခြုံစွာ သင်ယူပါ</strong>
+          <span data-en="No login or private data needed. Progress stays on your device." data-my="ဒီ Demo မှာ အကောင့်နဲ့ ကိုယ်ရေးအချက်အလက် မလိုပါ။ စက်ထဲတွင်သာ သိမ်းဆည်းပါသည်။">ဒီ Demo မှာ အကောင့်နဲ့ ကိုယ်ရေးအချက်အလက် မလိုပါ။ စက်ထဲတွင်သာ သိမ်းဆည်းပါသည်။</span>
+        </div>
+      </aside>
+
+      <!-- Main Content Pages -->
+      <main class="content-area">
+        <!-- 1. Adventure Home -->
+        <section id="home" class="page">
+          <div class="hero-card">
+            <div class="hero-body">
+              <div class="hero-eyebrow" data-en="YOUR NEXT ADVENTURE STARTS HERE" data-my="စွန့်စားခန်းအသစ် စတင်ဖို့ အသင့်ပဲလား">စွန့်စားခန်းအသစ် စတင်ဖို့ အသင့်ပဲလား</div>
+              <h2 class="hero-title" data-en="Learn to Code.<br>Explore AI." data-my="Coding သင်ယူမယ်။<br>AI ကို စူးစမ်းမယ်။">Coding သင်ယူမယ်။<br>AI ကို စူးစမ်းမယ်။</h2>
+              <p class="hero-desc" data-en="Play, solve puzzles and build your superpowers — one fun mission at a time." data-my="ဂိမ်းကစား၊ ပဟေဠိဖြေရှင်းပြီး ပျော်စရာ Mission လေးတွေနဲ့ ကျွမ်းကျင်မှုတိုးတက်အောင် လုပ်ကြမယ်။">ဂိမ်းကစား၊ ပဟေဠိဖြေရှင်းပြီး ပျော်စရာ Mission လေးတွေနဲ့ ကျွမ်းကျင်မှုတိုးတက်အောင် လုပ်ကြမယ်။</p>
+              <button class="btn-primary" data-go="coding" data-en="▶ Start Adventure" data-my="▶ စွန့်စားခန်း စမယ်">▶ စွန့်စားခန်း စမယ်</button>
+            </div>
+            <div class="hero-mascot" aria-label="Friendly Robot Mascot">🤖</div>
+          </div>
+
+          <!-- Quick Stats Bar -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">⚡</div>
+              <div class="stat-info">
+                <strong id="statXP">0 XP</strong>
+                <span data-en="Your Experience" data-my="ရရှိထားသော XP">ရရှိထားသော XP</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🌟</div>
+              <div class="stat-info">
+                <strong id="statLevel">Level 1</strong>
+                <span data-en="Curious Explorer" data-my="စူးစမ်းသူအသစ်">စူးစမ်းသူအသစ်</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🏅</div>
+              <div class="stat-info">
+                <strong id="statBadges">0</strong>
+                <span data-en="Badges Unlocked" data-my="ရရှိထားသောဆုတံဆိပ်">ရရှိထားသောဆုတံဆိပ်</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Missions Section -->
+          <div class="section-header">
+            <div>
+              <h2 data-en="Choose your mission" data-my="ကိုယ်လုပ်မယ့် Mission ကို ရွေးပါ">ကိုယ်လုပ်မယ့် Mission ကို ရွေးပါ</h2>
+              <p data-en="Small steps make big discoveries." data-my="ခြေလှမ်းသေးသေးလေးတွေက ရှာဖွေတွေ့ရှိမှုကြီးတွေဆီ ခေါ်ဆောင်သွားမယ်။">ခြေလှမ်းသေးသေးလေးတွေက ရှာဖွေတွေ့ရှိမှုကြီးတွေဆီ ခေါ်ဆောင်သွားမယ်။</p>
+            </div>
+            <button class="text-link" data-go="rewards">
+              <span data-en="View rewards →" data-my="ဆုတွေကြည့်ရန် →">ဆုတွေကြည့်ရန် →</span>
+            </button>
+          </div>
+
+          <div class="missions-grid">
+            <!-- Mission 1 -->
+            <article class="mission-card">
+              <div class="mission-art">🧩</div>
+              <h3 data-en="Robot Maze" data-my="Robot လမ်းကြောင်း">Robot လမ်းကြောင်း</h3>
+              <p data-en="Guide your robot to the star using sequential logic." data-my="Logic ကိုသုံးပြီး Robot ကို ကြယ်ဆီရောက်အောင် လမ်းညွှန်ပါ။">Logic ကိုသုံးပြီး Robot ကို ကြယ်ဆီရောက်အောင် လမ်းညွှန်ပါ။</p>
+              <div class="mission-foot">
+                <span class="xp-tag">⚡ +20 XP</span>
+                <button class="btn-secondary btn-sm" data-go="coding" data-en="Play Maze" data-my="ကစားမယ်">ကစားမယ်</button>
+              </div>
+            </article>
+
+            <!-- Mission 2 -->
+            <article class="mission-card">
+              <div class="mission-art">🧠</div>
+              <h3 data-en="Brain Quiz" data-my="ဉာဏ်စမ်း Quiz">ဉာဏ်စမ်း Quiz</h3>
+              <p data-en="Test your understanding of algorithms, loops, and safety." data-my="Code နဲ့ Computer အကြောင်း သိထားတာတွေ စမ်းသပ်ပါ။">Code နဲ့ Computer အကြောင်း သိထားတာတွေ စမ်းသပ်ပါ။</p>
+              <div class="mission-foot">
+                <span class="xp-tag">⚡ +10 XP</span>
+                <button class="btn-secondary btn-sm" data-go="quiz" data-en="Start Quiz" data-my="စမယ်">စမယ်</button>
+              </div>
+            </article>
+
+            <!-- Mission 3 -->
+            <article class="mission-card">
+              <div class="mission-art">🔎</div>
+              <h3 data-en="AI Detective" data-my="AI စုံထောက်">AI စုံထောက်</h3>
+              <p data-en="Train a pretend AI by providing clear patterns and examples." data-my="ဥပမာတွေက AI ကို ဘယ်လိုသင်ယူစေသလဲ စူးစမ်းပါ။">ဥပမာတွေက AI ကို ဘယ်လိုသင်ယူစေသလဲ စူးစမ်းပါ။</p>
+              <div class="mission-foot">
+                <span class="xp-tag">⚡ +15 XP</span>
+                <button class="btn-secondary btn-sm" data-go="ai" data-en="Explore AI" data-my="စူးစမ်းမယ်">စူးစမ်းမယ်</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 2. Coding Maze Game -->
+        <section id="coding" class="page hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="breadcrumb">
+                <button data-go="home" data-en="🏡 Home" data-my="🏡 ပင်မစာမျက်နှာ">🏡 ပင်မစာမျက်နှာ</button>
+                <span>/</span>
+                <span data-en="Robot Maze" data-my="Coding ဂိမ်း">Coding ဂိမ်း</span>
+              </div>
+              <h2 class="panel-title" data-en="🤖 Robot Maze Adventure" data-my="🤖 Robot လမ်းကြောင်း စွန့်စားခန်း">🤖 Robot လမ်းကြောင်း စွန့်စားခန်း</h2>
+              <p class="panel-desc" data-en="Help the robot navigate to the star! Avoid walls, plan your steps within the move limit, and unlock all 10 exciting levels. Use on-screen buttons or your keyboard arrow keys." data-my="Robot ကို ကြယ်ဆီရောက်အောင် ကူညီပါ။ အပြာရောင်နံရံတွေကို ရှောင်ပါ၊ သတ်မှတ်ထားသော လှုပ်ရှားမှုအကြိမ်အတွင်း စီစဉ်ပြီး အဆင့် ၁၀ ဆင့်စလုံးကို ဖွင့်လှစ်ပါ။ မျက်နှာပြင်ပေါ်ရှိ ခလုတ်များ သို့မဟုတ် Keyboard မြှားခလုတ်များဖြင့် ထိန်းချုပ်နိုင်ပါတယ်။">Robot ကို ကြယ်ဆီရောက်အောင် ကူညီပါ။ အပြာရောင်နံရံတွေကို ရှောင်ပါ၊ သတ်မှတ်ထားသော လှုပ်ရှားမှုအကြိမ်အတွင်း စီစဉ်ပြီး အဆင့် ၁၀ ဆင့်စလုံးကို ဖွင့်လှစ်ပါ။ မျက်နှာပြင်ပေါ်ရှိ ခလုတ်များ သို့မဟုတ် Keyboard မြှားခလုတ်များဖြင့် ထိန်းချုပ်နိုင်ပါတယ်။</p>
+            </div>
+
+            <!-- Maze Level Header & Move Counter -->
+            <div class="maze-level-bar">
+              <div class="maze-level-info">
+                <h3 id="mazeLevelTitle" style="font-size: 18px; font-weight: 900; color: var(--ink);">Level 1: First Steps</h3>
+                <p id="mazeLevelSubtitle" style="font-size: 13px; color: var(--ink-secondary); margin-top: 2px;">Learn straight paths and basic turns</p>
+              </div>
+              <div class="maze-meta-pills">
+                <span class="pill" id="mazeMovePill" style="background:#ffffff; border-color:#d7e2f5; font-size:13px;">
+                  👣 <span data-en="Moves:" data-my="လှုပ်ရှားမှု:">Moves:</span>&nbsp;<strong id="mazeMoveCount">0</strong>&nbsp;/&nbsp;<span id="mazeMoveLimit">12</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Interactive Level Selector (Levels 1 to 10) -->
+            <div class="maze-level-selector" id="mazeLevelSelector" aria-label="Level Select"></div>
+
+            <div class="game-area">
+              <!-- Win Card Banner -->
+              <div id="mazeWinCard" class="maze-win-card hidden">
+                <div class="maze-win-badge">🎉 ⭐ 🎉</div>
+                <h3 id="mazeWinTitle" style="font-size: 20px; font-weight: 900; margin-bottom: 6px;">Level Complete!</h3>
+                <p id="mazeWinDesc" style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 16px;">Awesome coding logic! You guided the robot to the star.</p>
+                <div class="maze-win-actions">
+                  <button id="mazeNextLevelBtn" class="btn-primary">
+                    <span data-en="Next Level ➔" data-my="နောက်တစ်ဆင့် ➔">Next Level ➔</span>
+                  </button>
+                  <button id="mazeReplayBtn" class="btn-secondary btn-sm">
+                    ↻ <span data-en="Replay Level" data-my="ပြန်ကစားမယ်">Replay Level</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 5x5 Maze Grid -->
+              <div class="maze-grid" id="maze" role="grid" aria-label="Robot Maze Grid"></div>
+
+              <!-- Sequence Planning Trail -->
+              <div class="maze-sequence-trail">
+                <span class="trail-label" data-en="Recorded Steps:" data-my="မှတ်တမ်းတင်ထားသော လှုပ်ရှားမှုများ:">Recorded Steps:</span>
+                <div id="trailSteps" class="trail-steps">
+                  <span class="trail-empty" data-en="Press arrow buttons to move" data-my="လှုပ်ရှားရန် မြှားခလုတ်များကို နှိပ်ပါ">လှုပ်ရှားရန် မြှားခလုတ်များကို နှိပ်ပါ</span>
+                </div>
+              </div>
+
+              <!-- Directional Buttons & Action Controls (Run, Reset, Hint) -->
+              <div class="maze-controls">
+                <button class="maze-btn" data-move="up" aria-label="Move Up">⬆️</button>
+                <button class="maze-btn" data-move="left" aria-label="Move Left">⬅️</button>
+                <button class="maze-btn" data-move="down" aria-label="Move Down">⬇️</button>
+                <button class="maze-btn" data-move="right" aria-label="Move Right">➡️</button>
+
+                <div class="maze-action-group">
+                  <button class="maze-action-btn btn-run" id="runMaze" title="Run / Replay current sequence" aria-label="Run Sequence">
+                    ▶ <span data-en="Run" data-my="စမ်း Run မယ်">Run</span>
+                  </button>
+                  <button class="maze-action-btn btn-reset" id="resetMaze" title="Reset position and moves" aria-label="Reset Level">
+                    ↻ <span data-en="Reset" data-my="ပြန်စမယ်">Reset</span>
+                  </button>
+                  <button class="maze-action-btn btn-hint" id="hintMaze" title="Get a level hint" aria-label="Get Hint">
+                    💡 <span data-en="Hint" data-my="အကြံပြုချက်">Hint</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Game Status / Feedback -->
+              <div class="game-status" id="mazeStatus" aria-live="polite">
+                Robot ကို ကြယ်ဆီရောက်အောင် လမ်းညွှန်ပါ။
+              </div>
+
+              <!-- Dynamic Hint Box -->
+              <div id="mazeHintBox" class="callout-box hidden" style="background: #fff9e6; border-color: #ffe48a; color: #6d4b00; margin-top: 14px;">
+                <strong>💡 <span data-en="Level Hint" data-my="အဆင့် လမ်းညွှန်ချက်">Level Hint</span></strong>
+                <span id="mazeHintText"></span>
+              </div>
+            </div>
+
+            <div class="callout-box">
+              <strong data-en="💡 Coding Concept: Sequence &amp; Constraints" data-my="💡 Coding အယူအဆ — Sequence နှင့် ကန့်သတ်ချက်များ">💡 Coding အယူအဆ — Sequence နှင့် ကန့်သတ်ချက်များ</strong>
+              <span data-en="A sequence is an exact order of instructions for a computer to follow. In computer science, algorithms also work under constraints — like limited memory or a move limit! Planning ahead saves steps." data-my="Sequence ဆိုတာ ကွန်ပျူတာ လိုက်နာဆောင်ရွက်ရမည့် တိကျသောအဆင့်များ ဖြစ်ပါတယ်။ ကွန်ပျူတာသိပ္ပံတွင် အကန့်အသတ်များ (Constraints) ကို သတိပြုရသလို လှုပ်ရှားမှုအကြိမ်ရေ အကန့်အသတ်အတွင်း ရောက်အောင် ကြိုတင်စီစဉ်ခြင်းက အရေးပါပါတယ်။">Sequence ဆိုတာ ကွန်ပျူတာ လိုက်နာဆောင်ရွက်ရမည့် တိကျသောအဆင့်များ ဖြစ်ပါတယ်။ ကွန်ပျူတာသိပ္ပံတွင် အကန့်အသတ်များ (Constraints) ကို သတိပြုရသလို လှုပ်ရှားမှုအကြိမ်ရေ အကန့်အသတ်အတွင်း ရောက်အောင် ကြိုတင်စီစဉ်ခြင်းက အရေးပါပါတယ်။</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Brain Quiz -->
+        <section id="quiz" class="page hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="breadcrumb">
+                <button data-go="home" data-en="🏡 Home" data-my="🏡 ပင်မစာမျက်နှာ">🏡 ပင်မစာမျက်နှာ</button>
+                <span>/</span>
+                <span data-en="Brain Quiz" data-my="ဉာဏ်စမ်း Quiz">ဉာဏ်စမ်း Quiz</span>
+              </div>
+              <h2 class="panel-title" data-en="🧠 Quick Brain Quiz" data-my="🧠 ဉာဏ်စမ်း Quiz">🧠 ဉာဏ်စမ်း Quiz</h2>
+              <p class="panel-desc" data-en="Choose the best answer for each question. Learn from every try and collect experience points!" data-my="အကောင်းဆုံးအဖြေကို ရွေးပါ။ ကြိုးစားမှုတိုင်းကနေ သင်ယူနိုင်ပြီး XP တွေ စုဆောင်းပါ။">အကောင်းဆုံးအဖြေကို ရွေးပါ။ ကြိုးစားမှုတိုင်းကနေ သင်ယူနိုင်ပြီး XP တွေ စုဆောင်းပါ။</p>
+            </div>
+
+            <div class="quiz-header">
+              <span id="quizCount">Question 1 of 4</span>
+              <span id="quizScore">Score: 0</span>
+            </div>
+
+            <div class="progress-track">
+              <div id="quizProgress" class="progress-bar"></div>
+            </div>
+
+            <h3 id="questionText" class="quiz-question">What is an algorithm?</h3>
+
+            <div id="quizOptions" class="quiz-options"></div>
+
+            <div id="quizFeedback" class="callout-box hidden" aria-live="polite"></div>
+
+            <div style="margin-top: 18px;">
+              <button id="nextQuestion" class="btn-primary hidden">Next question →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. AI Detective Lab -->
+        <section id="ai" class="page hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="breadcrumb">
+                <button data-go="home" data-en="🏡 Home" data-my="🏡 ပင်မစာမျက်နှာ">🏡 ပင်မစာမျက်နှာ</button>
+                <span>/</span>
+                <span data-en="AI Lab" data-my="AI စမ်းသပ်ခန်း">AI စမ်းသပ်ခန်း</span>
+              </div>
+              <h2 class="panel-title" data-en="✨ AI Detective Lab" data-my="✨ AI စုံထောက် စမ်းသပ်ခန်း">✨ AI စုံထောက် စမ်းသပ်ခန်း</h2>
+              <p class="panel-desc" data-en="AI learns patterns from examples. Can you help train our pretend AI to categorize items? This is an interactive simulation demonstrating machine learning concepts." data-my="AI က ဥပမာတွေထဲက ပုံစံတွေကို သင်ယူပါတယ်။ ဒီပုံတွေကို အမျိုးအစားခွဲဖို့ AI ကို ကူညီနိုင်မလား။ ဒါက Machine Learning သဘောတရားကို နားလည်စေဖို့ ဖန်တီးထားတဲ့ Simulation ဖြစ်ပါတယ်။">AI က ဥပမာတွေထဲက ပုံစံတွေကို သင်ယူပါတယ်။ ဒီပုံတွေကို အမျိုးအစားခွဲဖို့ AI ကို ကူညီနိုင်မလား။ ဒါက Machine Learning သဘောတရားကို နားလည်စေဖို့ ဖန်တီးထားတဲ့ Simulation ဖြစ်ပါတယ်။</p>
+            </div>
+
+            <div class="ai-sim-box">
+              <div class="sim-badge" data-en="🔍 TRAIN YOUR PATTERN SPOTTER (SIMULATION)" data-my="🔍 ပုံစံခွဲခြားတတ်အောင် လေ့ကျင့်ကြမယ် (SIMULATION)">🔍 ပုံစံခွဲခြားတတ်အောင် လေ့ကျင့်ကြမယ် (SIMULATION)</div>
+              <h3 id="aiPrompt" style="font-size: 18px; margin-bottom: 12px;">Which category does this belong to?</h3>
+
+              <div class="ai-card-view" id="aiItem">
+                <span class="ai-card-emoji" id="aiEmoji">🍎</span>
+                <strong class="ai-card-name" id="aiName">Apple</strong>
+                <span class="ai-card-sub" id="aiSub">Choose its category</span>
+              </div>
+
+              <div class="ai-btn-row">
+                <button class="btn-primary aiAnswer" data-answer="fruit" data-en="🍓 Fruit" data-my="🍓 သစ်သီး">🍓 သစ်သီး</button>
+                <button class="btn-secondary aiAnswer" data-answer="vehicle" data-en="🚗 Vehicle" data-my="🚗 ယာဉ်">🚗 ယာဉ်</button>
+                <button class="btn-secondary aiAnswer" data-answer="animal" data-en="🐱 Animal" data-my="🐱 တိရစ္ဆာန်">🐱 တိရစ္ဆာန်</button>
+              </div>
+
+              <div id="aiFeedback" class="callout-box hidden" aria-live="polite"></div>
+
+              <div style="margin-top: 14px; text-align: center;">
+                <button id="nextAI" class="btn-secondary btn-sm" disabled data-en="Next example →" data-my="နောက်ဥပမာ →">နောက်ဥပမာ →</button>
+              </div>
+
+              <div class="game-status" style="margin-top: 18px;">
+                <strong data-en="💡 Takeaway:" data-my="💡 သတိရပါ —">💡 သတိရပါ —</strong>
+                <span data-en="AI output depends heavily on the training examples provided. If training data is flawed or biased, the AI makes mistakes. Human supervision is always essential!" data-my="AI ရဲ့ ရလဒ်က သင်ပေးထားတဲ့ ဥပမာနဲ့ Data တွေပေါ် မူတည်ပါတယ်။ ဥပမာတွေ မပြည့်စုံရင် AI က အမှားလုပ်တတ်လို့ လူတွေက အမြဲ စစ်ဆေးပေးဖို့ လိုပါတယ်။">AI ရဲ့ ရလဒ်က သင်ပေးထားတဲ့ ဥပမာနဲ့ Data တွေပေါ် မူတည်ပါတယ်။ ဥပမာတွေ မပြည့်စုံရင် AI က အမှားလုပ်တတ်လို့ လူတွေက အမြဲ စစ်ဆေးပေးဖို့ လိုပါတယ်။</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Rewards & Badges -->
+        <section id="rewards" class="page hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="breadcrumb">
+                <button data-go="home" data-en="🏡 Home" data-my="🏡 ပင်မစာမျက်နှာ">🏡 ပင်မစာမျက်နှာ</button>
+                <span>/</span>
+                <span data-en="My Rewards" data-my="ဆုတံဆိပ်များ">ဆုတံဆိပ်များ</span>
+              </div>
+              <h2 class="panel-title" data-en="🏆 Your Adventure Rewards" data-my="🏆 ကိုယ့်ရဲ့ ဆုတံဆိပ်များ">🏆 ကိုယ့်ရဲ့ ဆုတံဆိပ်များ</h2>
+              <p class="panel-desc" data-en="Every activity you complete earns XP and unlocks badges. Celebrate your progress and keep discovering!" data-my="Mission တစ်ခုစီက သင့်ကို ပိုတော်လာစေပါတယ်။ ဆက်လက်စူးစမ်းပြီး ဆုတံဆိပ်အားလုံးကို ရယူပါ။">Mission တစ်ခုစီက သင့်ကို ပိုတော်လာစေပါတယ်။ ဆက်လက်စူးစမ်းပြီး ဆုတံဆိပ်အားလုံးကို ရယူပါ။</p>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-info">
+                  <strong id="rewardXP">0</strong>
+                  <span data-en="Total XP Earned" data-my="စုစုပေါင်း XP">စုစုပေါင်း XP</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🌟</div>
+                <div class="stat-info">
+                  <strong id="rewardLevel">1</strong>
+                  <span data-en="Current Level" data-my="လက်ရှိ Level">လက်ရှိ Level</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🏅</div>
+                <div class="stat-info">
+                  <strong id="rewardBadges">0/5</strong>
+                  <span data-en="Badges Unlocked" data-my="ဆုတံဆိပ်များ">ဆုတံဆိပ်များ</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-header">
+              <div>
+                <h3 style="font-size: 20px; font-weight: 900;" data-en="Badge Collection" data-my="ဆုတံဆိပ် စုဆောင်းမှု">ဆုတံဆိပ် စုဆောင်းမှု</h3>
+                <p data-en="Try different activities to unlock each special badge." data-my="Activity တစ်ခုစီကို စမ်းသပ်ပြီး အထူးဆုတံဆိပ်တွေ ရယူပါ။">Activity တစ်ခုစီကို စမ်းသပ်ပြီး အထူးဆုတံဆိပ်တွေ ရယူပါ။</p>
+              </div>
+            </div>
+
+            <div id="badgeList" class="badge-grid"></div>
+
+            <div style="margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--border-line);">
+              <button id="resetProgress" class="btn-secondary btn-sm">
+                ↻ <span data-en="Reset Demo Progress" data-my="Demo Progress ပြန်စမယ်">Demo Progress ပြန်စမယ်</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Learning Path -->
+        <section id="path" class="page hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="breadcrumb">
+                <button data-go="home" data-en="🏡 Home" data-my="🏡 ပင်မစာမျက်နှာ">🏡 ပင်မစာမျက်နှာ</button>
+                <span>/</span>
+                <span data-en="Learning Path" data-my="သင်ယူမှုလမ်းကြောင်း">သင်ယူမှုလမ်းကြောင်း</span>
+              </div>
+              <h2 class="panel-title" data-en="🗺️ Your Learning Roadmap" data-my="🗺️ သင်ယူမှုလမ်းကြောင်း">🗺️ သင်ယူမှုလမ်းကြောင်း</h2>
+              <p class="panel-desc" data-en="Follow our curated progressive journey designed for curious young minds. Step by step, from basic logic to AI concepts!" data-my="ကလေးများအတွက် ရေးဆွဲထားသော အဆင့်ဆင့် သင်ယူမှုလမ်းကြောင်းကို လိုက်နာပါ။ အခြေခံ Logic မှသည် AI သဘောတရားများအထိ တစ်ဆင့်ပြီးတစ်ဆင့် လေ့လာနိုင်ပါတယ်။">ကလေးများအတွက် ရေးဆွဲထားသော အဆင့်ဆင့် သင်ယူမှုလမ်းကြောင်းကို လိုက်နာပါ။ အခြေခံ Logic မှသည် AI သဘောတရားများအထိ တစ်ဆင့်ပြီးတစ်ဆင့် လေ့လာနိုင်ပါတယ်။</p>
+            </div>
+
+            <div class="path-timeline">
+              <div class="path-step-card">
+                <div class="path-icon">🟢</div>
+                <div class="path-info">
+                  <h4>1. <span data-en="Logic &amp; Sequences" data-my="Logic နဲ့ Sequence">Logic နဲ့ Sequence</span></h4>
+                  <p data-en="Learn to provide step-by-step instructions in the exact right order. Perfect for every beginner." data-my="ညွှန်ကြားချက်တွေကို အစီအစဉ်တကျ စီပါ။ Beginner အားလုံးအတွက် သင့်တော်ပါတယ်။">ညွှန်ကြားချက်တွေကို အစီအစဉ်တကျ စီပါ။ Beginner အားလုံးအတွက် သင့်တော်ပါတယ်။</p>
+                </div>
+                <button class="btn-secondary btn-sm" data-go="coding" data-en="Try Maze" data-my="စမ်းမယ်">စမ်းမယ်</button>
+              </div>
+
+              <div class="path-step-card">
+                <div class="path-icon">🔁</div>
+                <div class="path-info">
+                  <h4>2. <span data-en="Loops &amp; Patterns" data-my="Loop နဲ့ Pattern">Loop နဲ့ Pattern</span></h4>
+                  <p data-en="Discover how computers repeat actions efficiently without rewriting code." data-my="ညွှန်ကြားချက်တွေ ထပ်လုပ်ပုံနဲ့ Pattern တွေကို ရှာဖွေပါ။">ညွှန်ကြားချက်တွေ ထပ်လုပ်ပုံနဲ့ Pattern တွေကို ရှာဖွေပါ။</p>
+                </div>
+                <button class="btn-secondary btn-sm" data-go="quiz" data-en="Quiz" data-my="Quiz">Quiz</button>
+              </div>
+
+              <div class="path-step-card">
+                <div class="path-icon">🧱</div>
+                <div class="path-info">
+                  <h4>3. <span data-en="Build a Program" data-my="Program တည်ဆောက်ခြင်း">Program တည်ဆောက်ခြင်း</span></h4>
+                  <p data-en="Arrange visual blocks in sequence and run your first tiny animated program." data-my="Block တွေကို အစီအစဉ်တကျထားပြီး ပထမဆုံး Program ကို Run လုပ်ပါ။">Block တွေကို အစီအစဉ်တကျထားပြီး ပထမဆုံး Program ကို Run လုပ်ပါ။</p>
+                </div>
+                <button class="btn-secondary btn-sm" data-go="builder" data-en="Build" data-my="တည်ဆောက်မယ်">တည်ဆောက်မယ်</button>
+              </div>
+
+              <div class="path-step-card">
+                <div class="path-icon">✨</div>
+                <div class="path-info">
+                  <h4>4. <span data-en="AI &amp; Data Patterns" data-my="AI နဲ့ Data">AI နဲ့ Data</span></h4>
+                  <p data-en="Explore how examples train intelligent systems and why human safety matters." data-my="ဥပမာတွေက AI စနစ်တစ်ခုကို ဘယ်လိုသင်ယူစေသလဲ လေ့လာပါ။">ဥပမာတွေက AI စနစ်တစ်ခုကို ဘယ်လိုသင်ယူစေသလဲ လေ့လာပါ။</p>
+                </div>
+                <button class="btn-secondary btn-sm" data-go="ai" data-en="Explore AI" data-my="စူးစမ်းမယ်">စူးစမ်းမယ်</button>
+              </div>
+            </div>
+
+            <div class="callout-box" style="margin-top: 18px;">
+              <strong data-en="💡 Learning Tip" data-my="💡 သင်ယူမှုအကြံပြုချက်">💡 သင်ယူမှုအကြံပြုချက်</strong>
+              <span data-en="There is no race! Experiment freely, make mistakes, and learn at your own pace. Great programmers love solving puzzles." data-my="အမြန်ပြီးဖို့ ပြိုင်စရာမလိုပါဘူး။ စမ်းကြည့်ပါ၊ အမှားကနေ သင်ယူပါ၊ ကိုယ့်နှုန်းနဲ့ကိုယ် လေ့လာပါ။ Programmer ကောင်းတွေဟာ ပဟေဠိဖြေရှင်းရတာကို ချစ်မြတ်နိုးကြပါတယ်။">အမြန်ပြီးဖို့ ပြိုင်စရာမလိုပါဘူး။ စမ်းကြည့်ပါ၊ အမှားကနေ သင်ယူပါ၊ ကိုယ့်နှုန်းနဲ့ကိုယ် လေ့လာပါ။ Programmer ကောင်းတွေဟာ ပဟေဠိဖြေရှင်းရတာကို ချစ်မြတ်နိုးကြပါတယ်။</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Code Builder (Visual Block Sandbox with Live Stage) -->
+        <section id="builder" class="page hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="breadcrumb">
+                <button data-go="home" data-en="🏡 Home" data-my="🏡 ပင်မစာမျက်နှာ">🏡 ပင်မစာမျက်နှာ</button>
+                <span>/</span>
+                <span data-en="Code Builder" data-my="Code တည်ဆောက်ရန်">Code တည်ဆောက်ရန်</span>
+              </div>
+              <h2 class="panel-title" data-en="🧱 Build a Tiny Program" data-my="🧱 Program အသေးလေး တည်ဆောက်မယ်">🧱 Program အသေးလေး တည်ဆောက်မယ်</h2>
+              <p class="panel-desc" data-en="Tap or drag blocks to assemble your program sequence. Watch your robot move and jump on the mini stage when you hit Run!" data-my="Block တွေကို နှိပ်ပြီး သို့မဟုတ် ဆွဲထည့်ပြီး Program တည်ဆောက်ပါ။ Run လုပ်လိုက်တဲ့အခါ စင်မြင့်ပေါ်က Robot လေး လှုပ်ရှားခုန်ပေါက်တာကို ကြည့်ရှုပါ။">Block တွေကို နှိပ်ပြီး သို့မဟုတ် ဆွဲထည့်ပြီး Program တည်ဆောက်ပါ။ Run လုပ်လိုက်တဲ့အခါ စင်မြင့်ပေါ်က Robot လေး လှုပ်ရှားခုန်ပေါက်တာကို ကြည့်ရှုပါ။</p>
+            </div>
+
+            <!-- Animated Mini Stage -->
+            <div class="stage-container" id="builderStage">
+              <div class="stage-clouds">
+                <span>☁️</span>
+                <span>☀️</span>
+                <span>☁️</span>
+              </div>
+              <div class="stage-robot" id="stageRobot" aria-label="Animated robot character">🤖</div>
+              <div class="stage-goal" id="stageGoal" aria-label="Goal Star">⭐</div>
+            </div>
+
+            <!-- Palette of Blocks -->
+            <span class="builder-subhead" data-en="Choose a block (tap to add or drag into workspace):" data-my="Block ရွေးပါ (ထည့်ရန်နှိပ်ပါ သို့မဟုတ် ဆွဲချပါ) —">Block ရွေးပါ (ထည့်ရန်နှိပ်ပါ သို့မဟုတ် ဆွဲချပါ) —</span>
+            <div class="block-palette">
+              <button class="block-chip" draggable="true" data-block="right">➡️ <span data-en="Move right" data-my="ညာဘက်ရွှေ့">ညာဘက်ရွှေ့</span></button>
+              <button class="block-chip" draggable="true" data-block="jump">⬆️ <span data-en="Jump" data-my="ခုန်မယ်">ခုန်မယ်</span></button>
+              <button class="block-chip" draggable="true" data-block="repeat">🔁 <span data-en="Repeat ×2" data-my="၂ ကြိမ်ထပ်လုပ်">၂ ကြိမ်ထပ်လုပ်</span></button>
+            </div>
+
+            <!-- Workspace -->
+            <span class="builder-subhead" data-en="Your Program Sequence:" data-my="ကိုယ့် Program အဆင့်ဆင့် —">ကိုယ့် Program အဆင့်ဆင့် —</span>
+            <div id="workspace" class="workspace-box" aria-label="Your Program Workspace" role="region">
+              <div id="workspaceHint" class="workspace-hint" data-en="Your blocks will appear here. Add blocks above to start building!" data-my="ထည့်ထားတဲ့ Block တွေ ဒီမှာပေါ်လာပါမယ်။ စတင်တည်ဆောက်ဖို့ အပေါ်က Block တွေကို ထည့်ပါ။">
+                ထည့်ထားတဲ့ Block တွေ ဒီမှာပေါ်လာပါမယ်။ စတင်တည်ဆောက်ဖို့ အပေါ်က Block တွေကို ထည့်ပါ။
+              </div>
+            </div>
+
+            <!-- Execution Controls -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;">
+              <button id="runCode" class="btn-primary" data-en="▶ Run Program" data-my="▶ Program Run မယ်">▶ Program Run မယ်</button>
+              <button id="clearCode" class="btn-secondary" data-en="Clear Blocks" data-my="Block တွေဖျက်မယ်">Block တွေဖျက်မယ်</button>
+            </div>
+
+            <!-- Execution Output Feedback -->
+            <div id="codeOutput" class="callout-box" aria-live="polite" data-en="Output will appear here after you run your program." data-my="Program Run ပြီးရင် ရလဒ် ဒီမှာပေါ်လာပါမယ်။">
+              Program Run ပြီးရင် ရလဒ် ဒီမှာပေါ်လာပါမယ်။
+            </div>
+
+            <div class="game-status" style="margin-top: 14px;">
+              <strong data-en="💡 Learn:" data-my="💡 သင်ခန်းစာ —">💡 သင်ခန်းစာ —</strong>
+              <span data-en="A computer program is a sequence of instructions. The machine executes each command one after another!" data-my="Program ဆိုတာ ညွှန်ကြားချက်တွေ စုစည်းထားတာပါ။ ကွန်ပျူတာက အဲဒီညွှန်ကြားချက်တွေကို အစီအစဉ်အတိုင်း တစ်ခုပြီးတစ်ခု လုပ်ဆောင်ပါတယ်။">Program ဆိုတာ ညွှန်ကြားချက်တွေ စုစည်းထားတာပါ။ ကွန်ပျူတာက အဲဒီညွှန်ကြားချက်တွေကို အစီအစဉ်အတိုင်း တစ်ခုပြီးတစ်ခု လုပ်ဆောင်ပါတယ်။</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. AI Tutor (Kid-Safe Interactive Learning Buddy) -->
+        <section id="tutor" class="page hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="breadcrumb">
+                <button data-go="home" data-en="🏡 Home" data-my="🏡 ပင်မစာမျက်နှာ">🏡 ပင်မစာမျက်နှာ</button>
+                <span>/</span>
+                <span data-en="AI Tutor" data-my="AI ဆရာ">AI ဆရာ</span>
+              </div>
+              <h2 class="panel-title" data-en="💬 Ask Your Learning Buddy" data-my="💬 ကိုယ့်ရဲ့ သင်ယူဖော်ကို မေးပါ">💬 ကိုယ့်ရဲ့ သင်ယူဖော်ကို မေးပါ</h2>
+              <p class="panel-desc" data-en="Ask questions about coding and technology to get simple, kid-friendly explanations." data-my="Coding နဲ့ နည်းပညာအကြောင်း မေးခွန်းတွေမေးပြီး ကလေးတွေနားလည်လွယ်တဲ့ ရှင်းပြချက်တွေကို ရယူပါ။">Coding နဲ့ နည်းပညာအကြောင်း မေးခွန်းတွေမေးပြီး ကလေးတွေနားလည်လွယ်တဲ့ ရှင်းပြချက်တွေကို ရယူပါ။</p>
+            </div>
+
+            <!-- Clear Simulation Notice Required by Project Goals -->
+            <div class="tutor-mode-banner">
+              <span style="font-size: 20px;">🛡️</span>
+              <div>
+                <strong data-en="Mode: Kid-Safe Simulated Tutor" data-my="စနစ်ပုံစံ — ကလေးများအတွက် ဘေးကင်းသော Simulated Tutor">စနစ်ပုံစံ — ကလေးများအတွက် ဘေးကင်းသော Simulated Tutor</strong><br>
+                <span data-en="This tutor uses prepared, child-safe educational responses running locally in your browser. It does NOT send your data or messages to external AI services or cloud servers." data-my="ဒီ AI Tutor ဟာ ကလေးများ ဘေးကင်းလုံခြုံစေရန် သင့် Browser ထဲတွင်သာ အလုပ်လုပ်သော ကြိုတင်ပြင်ဆင်ထားသည့် ပညာပေးစနစ်ဖြစ်ပါသည်။ ပြင်ပ AI ဆာဗာများဆီ မည်သည့် ကိုယ်ရေးအချက်အလက်မှ ပေးပို့ခြင်း မရှိပါ။">ဒီ AI Tutor ဟာ ကလေးများ ဘေးကင်းလုံခြုံစေရန် သင့် Browser ထဲတွင်သာ အလုပ်လုပ်သော ကြိုတင်ပြင်ဆင်ထားသည့် ပညာပေးစနစ်ဖြစ်ပါသည်။ ပြင်ပ AI ဆာဗာများဆီ မည်သည့် ကိုယ်ရေးအချက်အလက်မှ ပေးပို့ခြင်း မရှိပါ။</span>
+              </div>
+            </div>
+
+            <!-- Popular Quick Topics -->
+            <span class="builder-subhead" data-en="Tap a popular question:" data-my="ခေါင်းစဉ်တစ်ခုခုကို နှိပ်ပြီး မေးကြည့်ပါ —">ခေါင်းစဉ်တစ်ခုခုကို နှိပ်ပြီး မေးကြည့်ပါ —</span>
+            <div class="tutor-topics">
+              <button class="topic-chip tutor-topic" data-topic="algorithm" data-en="What is an algorithm?" data-my="Algorithm ဆိုတာဘာလဲ?">Algorithm ဆိုတာဘာလဲ?</button>
+              <button class="topic-chip tutor-topic" data-topic="loop" data-en="What is a loop?" data-my="Loop ဆိုတာဘာလဲ?">Loop ဆိုတာဘာလဲ?</button>
+              <button class="topic-chip tutor-topic" data-topic="ai" data-en="How does AI learn?" data-my="AI က ဘယ်လိုသင်ယူသလဲ?">AI က ဘယ်လိုသင်ယူသလဲ?</button>
+              <button class="topic-chip tutor-topic" data-topic="bug" data-en="What is a bug in code?" data-my="Coding မှာ Bug ဆိုတာဘာလဲ?">Coding မှာ Bug ဆိုတာဘာလဲ?</button>
+              <button class="topic-chip tutor-topic" data-topic="safety" data-en="How do I stay safe online?" data-my="အွန်လိုင်းမှာ ဘယ်လိုလုံခြုံမလဲ?">အွန်လိုင်းမှာ ဘယ်လိုလုံခြုံမလဲ?</button>
+            </div>
+
+            <!-- Custom Question Input (Simulated Offline Assistant) -->
+            <div class="tutor-ask-box">
+              <input type="text" id="tutorCustomInput" class="tutor-input" placeholder="မေးချင်တဲ့ စကားလုံး ရိုက်ထည့်ပါ (ဥပမာ- robot, game, code)..." data-ph-en="Type a topic (e.g., robot, game, loop, password)..." data-ph-my="မေးချင်တဲ့ စကားလုံး ရိုက်ထည့်ပါ (ဥပမာ- robot, game, loop)..." aria-label="Type your question">
+              <button id="tutorAskBtn" class="btn-purple" data-en="Ask Tutor" data-my="မေးမယ်">မေးမယ်</button>
+            </div>
+
+            <!-- Response Card -->
+            <div id="tutorAnswer" class="tutor-response-card" aria-live="polite">
+              အသစ်တစ်ခုခု သင်ယူဖို့ အပေါ်က ခေါင်းစဉ်တစ်ခု ရွေးပါ သို့မဟုတ် မေးခွန်းတစ်ခု ရိုက်ထည့်ပါ။
+            </div>
+
+            <!-- Child Online Safety Callout -->
+            <div class="privacy-banner" style="margin-top: 20px;">
+              <strong data-en="🛡️ Golden Rule of Online Safety" data-my="🛡️ အွန်လိုင်း လုံခြုံရေး ရွှေစည်းမျဉ်း">🛡️ အွန်လိုင်း လုံခြုံရေး ရွှေစည်းမျဉ်း</strong>
+              <span data-en="Never share your full real name, home address, school, phone number, passwords, or personal photos with strangers online. Always ask a parent or trusted adult if something feels weird or uncomfortable." data-my="အမည်အပြည့်အစုံ၊ အိမ်လိပ်စာ၊ ကျောင်းအမည်၊ ဖုန်းနံပါတ်၊ Password နဲ့ ဓာတ်ပုံတွေကို အွန်လိုင်းက မသိသူတွေကို လုံးဝ မပေးပါနဲ့။ မသင်္ကာစရာ တစ်ခုခုကြုံရင် ယုံကြည်ရတဲ့ မိဘ သို့မဟုတ် လူကြီးတစ်ယောက်ကို အမြဲ ပြောပြပါ။">အမည်အပြည့်အစုံ၊ အိမ်လိပ်စာ၊ ကျောင်းအမည်၊ ဖုန်းနံပါတ်၊ Password နဲ့ ဓာတ်ပုံတွေကို အွန်လိုင်းက မသိသူတွေကို လုံးဝ မပေးပါနဲ့။ မသင်္ကာစရာ တစ်ခုခုကြုံရင် ယုံကြည်ရတဲ့ မိဘ သို့မဟုတ် လူကြီးတစ်ယောက်ကို အမြဲ ပြောပြပါ။</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. Parent Zone -->
+        <section id="parent" class="page hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="breadcrumb">
+                <button data-go="home" data-en="🏡 Home" data-my="🏡 ပင်မစာမျက်နှာ">🏡 ပင်မစာမျက်နှာ</button>
+                <span>/</span>
+                <span data-en="Parent Zone" data-my="မိဘအပိုင်း">မိဘအပိုင်း</span>
+              </div>
+              <h2 class="panel-title" data-en="👨‍👩‍👧 Parent &amp; Educator Zone" data-my="👨‍👩‍👧 မိဘများနှင့် ဆရာများအတွက်">👨‍👩‍👧 မိဘများနှင့် ဆရာများအတွက်</h2>
+              <p class="panel-desc" data-en="A dashboard overview of your child's local learning progress, activity completions, and digital literacy development." data-my="ကလေးများ၏ သင်ယူမှုတိုးတက်မှု၊ လုပ်ဆောင်ချက်များ ပြီးမြောက်မှုနှင့် ဒစ်ဂျစ်တယ် နည်းပညာဆိုင်ရာ တိုးတက်မှုများကို ကြည့်ရှုနိုင်သည့် Dashboard ဖြစ်ပါသည်။">ကလေးများ၏ သင်ယူမှုတိုးတက်မှု၊ လုပ်ဆောင်ချက်များ ပြီးမြောက်မှုနှင့် ဒစ်ဂျစ်တယ် နည်းပညာဆိုင်ရာ တိုးတက်မှုများကို ကြည့်ရှုနိုင်သည့် Dashboard ဖြစ်ပါသည်။</p>
+            </div>
+
+            <div class="metric-grid">
+              <div class="metric-card">
+                <strong id="parentXP">0 XP</strong>
+                <span data-en="Experience Earned" data-my="ရရှိထားသော XP">ရရှိထားသော XP</span>
+              </div>
+              <div class="metric-card">
+                <strong id="parentLevel">Level 1</strong>
+                <span data-en="Current Level" data-my="လက်ရှိ Level">လက်ရှိ Level</span>
+              </div>
+              <div class="metric-card">
+                <strong id="parentQuiz">Not tried</strong>
+                <span data-en="Brain Quiz" data-my="ဉာဏ်စမ်း Quiz">ဉာဏ်စမ်း Quiz</span>
+              </div>
+              <div class="metric-card">
+                <strong id="parentAI">Not tried</strong>
+                <span data-en="AI Detective Lab" data-my="AI စမ်းသပ်ခန်း">AI စမ်းသပ်ခန်း</span>
+              </div>
+            </div>
+
+            <div class="section-header" style="margin-top: 24px;">
+              <div>
+                <h3 style="font-size: 19px; font-weight: 900;" data-en="What Children Learn in CodeQuest" data-my="ကလေးတွေ CodeQuest မှာ ဘာတွေ လေ့ကျင့်နေသလဲ">ကလေးတွေ CodeQuest မှာ ဘာတွေ လေ့ကျင့်နေသလဲ</h3>
+              </div>
+            </div>
+
+            <ul class="practice-list">
+              <li data-en="Computational Thinking: Deconstructing problems into sequential logical steps (Robot Maze &amp; Code Builder)." data-my="Computational Thinking — ပြဿနာများကို အဆင့်ဆင့် စနစ်တကျ ဖြေရှင်းပုံ (Robot Maze နှင့် Code Builder)။">Computational Thinking — ပြဿနာများကို အဆင့်ဆင့် စနစ်တကျ ဖြေရှင်းပုံ (Robot Maze နှင့် Code Builder)။</li>
+              <li data-en="Pattern Recognition: Learning how machine learning discovers patterns from dataset examples (AI Detective)." data-my="Pattern Recognition — Machine Learning က ဥပမာများမှ ပုံစံများကို မည်သို့လေ့လာသလဲ (AI Detective)။">Pattern Recognition — Machine Learning က ဥပမာများမှ ပုံစံများကို မည်သို့လေ့လာသလဲ (AI Detective)။</li>
+              <li data-en="Resilience &amp; Trial-and-Error: Testing instructions, receiving instant feedback, and debugging solutions." data-my="ပြန်လည်ကြိုးစားနိုင်စွမ်း — စမ်းသပ်ခြင်း၊ အကြံပြုချက်ရယူခြင်းနှင့် အမှားပြင်ဆင်ခြင်းမှတစ်ဆင့် သင်ယူမှု။">ပြန်လည်ကြိုးစားနိုင်စွမ်း — စမ်းသပ်ခြင်း၊ အကြံပြုချက်ရယူခြင်းနှင့် အမှားပြင်ဆင်ခြင်းမှတစ်ဆင့် သင်ယူမှု။</li>
+              <li data-en="Digital Safety &amp; Ethics: Understanding that AI requires human oversight and learning to guard personal privacy." data-my="ဒစ်ဂျစ်တယ်လုံခြုံရေး — AI ကို လူသားများက ပြန်စစ်ဆေးရမည့် အရေးပါမှုနှင့် အွန်လိုင်းကိုယ်ရေးအချက်အလက် ကာကွယ်မှု။">ဒစ်ဂျစ်တယ်လုံခြုံရေး — AI ကို လူသားများက ပြန်စစ်ဆေးရမည့် အရေးပါမှုနှင့် အွန်လိုင်းကိုယ်ရေးအချက်အလက် ကာကွယ်မှု။</li>
+            </ul>
+
+            <div class="privacy-banner">
+              <strong data-en="🔒 Privacy &amp; Child Protection Commitment" data-my="🔒 ကိုယ်ရေးအချက်အလက်နှင့် ကလေးသူငယ် ကာကွယ်ရေးဆိုင်ရာ">🔒 ကိုယ်ရေးအချက်အလက်နှင့် ကလေးသူငယ် ကာကွယ်ရေးဆိုင်ရာ</strong>
+              <span data-en="This prototype is designed with Privacy-by-Design principles. It does NOT collect names, emails, camera feeds, or locations. All learning progress is stored solely in this device's browser localStorage. If deployed to production, it should include verified parental consent (COPPA/GDPR-K compliance), end-to-end security, and strict data governance." data-my="ဒီ MVP စနစ်ကို ကလေးသူငယ် အချက်အလက်လုံခြုံမှု ရှေ့တန်းတင် စီစဉ်ထားပါသည်။ အမည်၊ အီးမေးလ်၊ ကင်မရာ သို့မဟုတ် တည်နေရာများကို လုံးဝ ကောက်ယူခြင်းမရှိဘဲ သင်ယူမှုမှတ်တမ်းကို စက်ထဲတွင်သာ သိမ်းဆည်းပါသည်။ တကယ့် Production စနစ်အဖြစ် ထုတ်ဝေမည်ဆိုပါက မိဘသဘောတူညီချက် (COPPA/GDPR-K) နှင့် ဒေတာလုံခြုံရေးစနစ်များ အပြည့်အစုံ ပါဝင်သင့်ပါသည်။">ဒီ MVP စနစ်ကို ကလေးသူငယ် အချက်အလက်လုံခြုံမှု ရှေ့တန်းတင် စီစဉ်ထားပါသည်။ အမည်၊ အီးမေးလ်၊ ကင်မရာ သို့မဟုတ် တည်နေရာများကို လုံးဝ ကောက်ယူခြင်းမရှိဘဲ သင်ယူမှုမှတ်တမ်းကို စက်ထဲတွင်သာ သိမ်းဆည်းပါသည်။ တကယ့် Production စနစ်အဖြစ် ထုတ်ဝေမည်ဆိုပါက မိဘသဘောတူညီချက် (COPPA/GDPR-K) နှင့် ဒေတာလုံခြုံရေးစနစ်များ အပြည့်အစုံ ပါဝင်သင့်ပါသည်။</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div>CodeQuest MVP · Offline Learning progress is stored locally in this browser.</div>
+          <div>CodeQuest MVP · သင်ယူမှုမှတ်တမ်းကို ဒီစက်ရဲ့ Browser ထဲမှာပဲ လုံခြုံစွာ သိမ်းဆည်းထားပါတယ်။</div>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <!-- Maze Data & Engine Logic -->
+  <script src="maze-data.js"></script>
+  <!-- Core JavaScript -->
+  <script src="script.js" defer></script>
+</body>
+</html>
