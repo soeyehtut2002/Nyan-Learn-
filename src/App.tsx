@@ -13,14 +13,19 @@ import { LearningPathView } from './features/path/LearningPathView';
 import { BlocklyBuilderView } from './features/blockly-builder/components/BlocklyBuilderView';
 import { AITutorView } from './features/tutor/AITutorView';
 import { ParentZoneView } from './features/parent/ParentZoneView';
+import { CourseMainView } from './features/courses/CourseMainView';
 
 export const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string>('home');
+  const [selectedCourseId, setSelectedCourseId] = useState<string | undefined>();
+  const [selectedLessonId, setSelectedLessonId] = useState<string | undefined>();
   const { state, soundEnabled, toggleSound } = useProgress();
   const { lang, setLanguage, t } = useTranslation();
 
-  const handleNavigate = (page: string) => {
+  const handleNavigate = (page: string, courseId?: string, lessonId?: string) => {
     setCurrentPage(page);
+    setSelectedCourseId(courseId);
+    setSelectedLessonId(lessonId);
     audioService.play('step');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -91,6 +96,13 @@ export const App: React.FC = () => {
               <span>{t('navHome')}</span>
             </button>
             <button
+              className={`nav-btn ${currentPage === 'courses' ? 'active' : ''}`}
+              onClick={() => handleNavigate('courses')}
+            >
+              <span className="ico">📚</span>
+              <span>{lang === 'my' ? 'သင်တန်းများ' : 'Courses'}</span>
+            </button>
+            <button
               className={`nav-btn ${currentPage === 'coding' ? 'active' : ''}`}
               onClick={() => handleNavigate('coding')}
             >
@@ -156,7 +168,15 @@ export const App: React.FC = () => {
 
         {/* Main Content View Switcher */}
         <main className="content-area">
-          {currentPage === 'home' && <HomeView onNavigate={handleNavigate} onStart={() => handleNavigate('coding')} />}
+          {currentPage === 'home' && <HomeView onNavigate={handleNavigate} onStart={() => handleNavigate('courses')} />}
+          {currentPage === 'courses' && (
+            <CourseMainView
+              initialCourseId={selectedCourseId}
+              initialLessonId={selectedLessonId}
+              language={lang}
+              onBackToHome={() => handleNavigate('home')}
+            />
+          )}
           {currentPage === 'coding' && <MazeView />}
           {currentPage === 'quiz' && <QuizView />}
           {currentPage === 'ai' && <AIDetectiveView />}

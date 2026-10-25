@@ -17,6 +17,8 @@ interface ProgressContextType {
   markModuleCompleted: (moduleKey: 'mazeDone' | 'quizDone' | 'aiDone' | 'builderDone') => void;
   toggleSound: () => void;
   completeMazeLevel: (levelId: number, xpReward: number) => { isFirstTime: boolean };
+  completeLesson: (courseId: string, lessonId: string, score: number, xpReward: number) => { isFirstTime: boolean };
+  completeCourseCertificate: (courseId: string, score: number, badgeId: BadgeId) => void;
   resetAllProgress: () => void;
   toastMessage: string | null;
   clearToast: () => void;
@@ -144,6 +146,77 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return { isFirstTime };
   }, [lang, showToast]);
 
+  const completeLesson = useCallback((courseId: string, lessonId: string, score: number, xpReward: number) => {
+    let isFirstTime = false;
+    setProgress(prev => {
+      const prevCourseCompleted = prev.completedLessons?.[courseId] || [];
+      const alreadyCompleted = prevCourseCompleted.includes(lessonId);
+      isFirstTime = !alreadyCompleted;
+
+      const nextCourseCompleted = alreadyCompleted
+        ? prevCourseCompleted
+        : [...prevCourseCompleted, lessonId];
+
+      const prevScores = prev.courseQuizScores?.[courseId] || {};
+      const nextScores = { ...prevScores, [lessonId]: Math.max(score, prevScores[lessonId] || 0) };
+
+      const addedXp = isFirstTime ? xpReward : 0;
+      const nextXp = prev.xp + addedXp;
+
+      if (isFirstTime && addedXp > 0) {
+        AudioService.play('star');
+        showToast(lang === 'my'
+          ? `🎉 သင်ခန်းစာ ပြီးမြောက်ပါပြီ! +${addedXp} XP!`
+          : `🎉 Lesson Complete! +${addedXp} XP!`);
+      }
+
+      return {
+        ...prev,
+        xp: nextXp,
+        completedLessons: {
+          ...(prev.completedLessons || {}),
+          [courseId]: nextCourseCompleted,
+        },
+        courseQuizScores: {
+          ...(prev.courseQuizScores || {}),
+          [courseId]: nextScores,
+        },
+      };
+    });
+
+    return { isFirstTime };
+  }, [lang, showToast]);
+
+  const completeCourseCertificate = useCallback((courseId: string, score: number, badgeId: BadgeId) => {
+    setProgress(prev => {
+      const alreadyCertified = Boolean(prev.courseCertificates?.[courseId]);
+      const nextCertificates = {
+        ...(prev.courseCertificates || {}),
+        [courseId]: { date: new Date().toISOString().split('T')[0], score },
+      };
+
+      const nextBadges = [...prev.badges];
+      if (badgeId && !nextBadges.includes(badgeId)) {
+        nextBadges.push(badgeId);
+      }
+
+      const bonusXp = alreadyCertified ? 0 : 50;
+      const nextXp = prev.xp + bonusXp;
+
+      AudioService.play('star');
+      showToast(lang === 'my'
+        ? `🏆 ဂုဏ်ယူပါတယ်! သင်တန်းအောင်လက်မှတ် ရရှိပါပြီ!${bonusXp ? ` (+${bonusXp} XP)` : ''}`
+        : `🏆 Congratulations! Course Certificate Earned!${bonusXp ? ` (+${bonusXp} XP)` : ''}`);
+
+      return {
+        ...prev,
+        xp: nextXp,
+        badges: nextBadges,
+        courseCertificates: nextCertificates,
+      };
+    });
+  }, [lang, showToast]);
+
   const markModuleCompleted = useCallback((moduleKey: 'mazeDone' | 'quizDone' | 'aiDone' | 'builderDone') => {
     setProgress(prev => {
       if (prev[moduleKey]) return prev;
@@ -171,6 +244,8 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         markModuleCompleted,
         toggleSound,
         completeMazeLevel,
+        completeLesson,
+        completeCourseCertificate,
         resetAllProgress,
         toastMessage,
         clearToast,

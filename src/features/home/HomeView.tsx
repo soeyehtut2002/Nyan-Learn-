@@ -109,6 +109,18 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onStart }) => {
             </button>
           </div>
         </article>
+
+        <article className="mission-card" style={{ borderColor: 'var(--purple-main, #6366f1)' }}>
+          <div className="mission-art">📚</div>
+          <h3>{t('missions.courses_title') || (t('stats.level') === 'အဆင့်' ? 'စနစ်တကျ သင်တန်း ၄ ခု' : 'Academy Courses')}</h3>
+          <p>{t('missions.courses_desc') || (t('stats.level') === 'အဆင့်' ? 'ပရိုဂရမ်မင်း၊ AI၊ ဆိုက်ဘာလုံခြုံရေး နှင့် ဝဘ်ဆိုဒ်တည်ဆောက်ခြင်း အပြည့်အစုံသင်ရိုးများ' : 'Full interactive courses: Programming, AI, Cyber Safety & Web Development with hands-on practice.')}</p>
+          <div className="mission-foot">
+            <span className="xp-tag">⚡ +1200 XP</span>
+            <button className="btn-secondary btn-sm" onClick={() => handleNav('courses')}>
+              {t('stats.level') === 'အဆင့်' ? 'သင်တန်းများလေ့လာမည် →' : 'Explore Courses →'}
+            </button>
+          </div>
+        </article>
       </div>
     </div>
   );

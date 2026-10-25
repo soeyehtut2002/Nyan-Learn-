@@ -12,6 +12,9 @@ export const defaultProgressState: UserProgressState = {
   unlockedMazeLevels: [1],
   completedMazeLevels: [],
   soundEnabled: true,
+  completedLessons: {},
+  courseQuizScores: {},
+  courseCertificates: {},
 };
 
 export class StorageService {
@@ -40,6 +43,15 @@ export class StorageService {
           ? parsed.completedMazeLevels
           : parsed.mazeDone ? [1] : [],
         soundEnabled: parsed.soundEnabled !== false,
+        completedLessons: typeof parsed.completedLessons === 'object' && parsed.completedLessons !== null
+          ? parsed.completedLessons
+          : {},
+        courseQuizScores: typeof parsed.courseQuizScores === 'object' && parsed.courseQuizScores !== null
+          ? parsed.courseQuizScores
+          : {},
+        courseCertificates: typeof parsed.courseCertificates === 'object' && parsed.courseCertificates !== null
+          ? parsed.courseCertificates
+          : {},
       };
 
       return migrated;

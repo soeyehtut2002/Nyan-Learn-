@@ -50,6 +50,16 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
         : 'Assemble visual code blocks, run live animations, and explore code generation using Google Blockly.',
       completed: state.builderDone,
       btnLabel: lang === 'my' ? 'Code Builder သွားမယ် →' : 'Open Code Builder →'
+    },
+    {
+      num: 5,
+      id: 'courses',
+      title: lang === 'my' ? 'အဆင့် ၅: Nyan Learn သင်ရိုး ၄ ခု' : 'Step 5: Complete Academy Courses',
+      desc: lang === 'my'
+        ? 'Basic Programming, AI, Cybersecurity နှင့် Web Development တို့ကို အစအဆုံး စနစ်တကျ သင်ယူပြီး အောင်လက်မှတ် ရယူပါ။'
+        : 'Complete in-depth courses covering Programming, AI, Cybersecurity, and Web Development with interactive activities and certificates.',
+      completed: Object.keys(state.courseCertificates || {}).length > 0,
+      btnLabel: lang === 'my' ? 'သင်တန်းများ ကြည့်ရှုမည် →' : 'Explore All 4 Courses →'
     }
   ];
 
