@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_COURSES, getCourseById, getLessonById } from '../src/features/courses/data/allCourses';
+import { ALL_COURSES, getCourseById } from '../src/features/courses/data/allCourses';
 
 describe('Nyan Learn Academy - 4 Complete Courses Content Audit', () => {
   it('should load all 4 courses successfully', () => {
