@@ -203,20 +203,48 @@
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: none;
-  color: var(--ink-secondary, #585d82);
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: var(--purple-main, #6c47ff);
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  margin-bottom: 8px;
-  transition: color 0.15s ease;
+  margin-bottom: 12px;
+  transition: all 0.15s ease;
+  text-decoration: none;
 }
 
 .back-link:hover {
-  color: var(--purple-main, #6c47ff);
+  background: var(--purple-light, #f0edff);
+  border-color: var(--purple-main, #6c47ff);
 }
+
+.back-link svg {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  flex-shrink: 0;
+}
+
+/* Icon utility sizes */
+.w-3 { width: 12px !important; max-width: 12px !important; }
+.w-3\.5 { width: 14px !important; max-width: 14px !important; }
+.w-4 { width: 16px !important; max-width: 16px !important; }
+.w-5 { width: 20px !important; max-width: 20px !important; }
+.w-6 { width: 24px !important; max-width: 24px !important; }
+.w-8 { width: 32px !important; max-width: 32px !important; }
+.w-9 { width: 36px !important; max-width: 36px !important; }
+.h-3 { height: 12px !important; max-height: 12px !important; }
+.h-3\.5 { height: 14px !important; max-height: 14px !important; }
+.h-4 { height: 16px !important; max-height: 16px !important; }
+.h-5 { height: 20px !important; max-height: 20px !important; }
+.h-6 { height: 24px !important; max-height: 24px !important; }
+.h-8 { height: 32px !important; max-height: 32px !important; }
+.h-9 { height: 36px !important; max-height: 36px !important; }
 
 .course-banner {
   background: linear-gradient(135deg, #ffffff 0%, #f9f8ff 100%);

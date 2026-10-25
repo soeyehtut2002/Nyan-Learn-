@@ -93,114 +93,241 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({
   }, [htmlCode, cssCode, jsCode, autoRun]);
 
   return (
-    <div className="bg-slate-900 border border-slate-700/80 rounded-2xl overflow-hidden shadow-2xl flex flex-col my-6">
+    <div
+      style={{
+        background: '#0f172a',
+        border: '1.5px solid #334155',
+        borderRadius: '20px',
+        overflow: 'hidden',
+        boxShadow: '0 12px 32px rgba(15, 23, 42, 0.25)',
+        display: 'flex',
+        flexDirection: 'column',
+        margin: '20px 0',
+      }}
+    >
       {/* Top Header */}
-      <div className="bg-slate-800/90 px-4 py-3 border-b border-slate-700/80 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
-          <div className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-          <div className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
-          <span className="text-sm font-semibold text-slate-200 ml-2 flex items-center gap-1.5">
-            <Code className="w-4 h-4 text-cyan-400" />
+      <div
+        style={{
+          background: '#1e293b',
+          padding: '12px 18px',
+          borderBottom: '1.5px solid #334155',
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ef4444' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#f59e0b' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10b981' }} />
+          <span style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc', marginLeft: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Code className="w-4 h-4" style={{ color: '#38bdf8' }} />
             {title}
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={handleRun}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white rounded-lg text-xs font-semibold shadow-md active:scale-95 transition-all"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 14px',
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              color: '#ffffff',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+            }}
             title="Run Code"
           >
-            <Play className="w-3.5 h-3.5 fill-current" />
-            {language === 'my' ? 'ကုဒ် Run မည်' : 'Run'}
+            <Play className="w-3.5 h-3.5" style={{ fill: 'currentColor' }} />
+            <span>{language === 'my' ? 'ကုဒ် Run မည်' : 'Run'}</span>
           </button>
           <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium active:scale-95 transition-all"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              background: '#334155',
+              color: '#f1f5f9',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: 600,
+              border: '1px solid #475569',
+              cursor: 'pointer',
+            }}
             title="Reset Code"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            {language === 'my' ? 'မူလအတိုင်းပြန်ထား' : 'Reset'}
+            <span>{language === 'my' ? 'မူလအတိုင်းပြန်ထား' : 'Reset'}</span>
           </button>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs font-medium transition-all"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 10px',
+              background: '#334155',
+              color: '#cbd5e1',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: 600,
+              border: '1px solid #475569',
+              cursor: 'pointer',
+            }}
             title="Copy Code"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-3.5 h-3.5" style={{ color: '#4ade80' }} /> : <Copy className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
 
       {/* Instructions if provided */}
       {instructions && (
-        <div className="bg-sky-950/40 border-b border-sky-800/40 px-4 py-2.5 text-xs text-sky-200 flex items-start gap-2">
-          <Sparkles className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+        <div
+          style={{
+            background: 'rgba(14, 165, 233, 0.1)',
+            borderBottom: '1px solid rgba(14, 165, 233, 0.2)',
+            padding: '10px 18px',
+            fontSize: '12.5px',
+            color: '#bae6fd',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '8px',
+          }}
+        >
+          <Sparkles className="w-4 h-4" style={{ color: '#38bdf8', flexShrink: 0, marginTop: '2px' }} />
           <span>{language === 'my' ? instructions.my : instructions.en}</span>
         </div>
       )}
 
       {/* Editor & Preview Split Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-700/80" style={{ minHeight: height }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          minHeight: height,
+        }}
+      >
         {/* Left Side: Editors */}
-        <div className="flex flex-col bg-slate-900">
+        <div style={{ display: 'flex', flexDirection: 'column', background: '#0b1120', borderRight: '1px solid #334155' }}>
           {/* Tabs */}
-          <div className="flex items-center bg-slate-950/70 border-b border-slate-800 px-2 pt-2 gap-1">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: '#0f172a',
+              borderBottom: '1px solid #1e293b',
+              padding: '6px 10px 0',
+              gap: '4px',
+            }}
+          >
             <button
               onClick={() => setActiveTab('html')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-t-lg transition-all flex items-center gap-1.5 ${
-                activeTab === 'html'
-                  ? 'bg-slate-900 text-orange-400 border-t-2 border-orange-500 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
-              }`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                fontSize: '12px',
+                fontWeight: 700,
+                borderTopLeftRadius: '8px',
+                borderTopRightRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                background: activeTab === 'html' ? '#0b1120' : 'transparent',
+                color: activeTab === 'html' ? '#fb923c' : '#94a3b8',
+                borderTop: activeTab === 'html' ? '2px solid #f97316' : '2px solid transparent',
+              }}
             >
-              <span className="w-2 h-2 rounded-full bg-orange-500 inline-block" />
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f97316', display: 'inline-block' }} />
               index.html
             </button>
             <button
               onClick={() => setActiveTab('css')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-t-lg transition-all flex items-center gap-1.5 ${
-                activeTab === 'css'
-                  ? 'bg-slate-900 text-cyan-400 border-t-2 border-cyan-500 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
-              }`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                fontSize: '12px',
+                fontWeight: 700,
+                borderTopLeftRadius: '8px',
+                borderTopRightRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                background: activeTab === 'css' ? '#0b1120' : 'transparent',
+                color: activeTab === 'css' ? '#38bdf8' : '#94a3b8',
+                borderTop: activeTab === 'css' ? '2px solid #0ea5e9' : '2px solid transparent',
+              }}
             >
-              <span className="w-2 h-2 rounded-full bg-cyan-500 inline-block" />
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0ea5e9', display: 'inline-block' }} />
               style.css
             </button>
             <button
               onClick={() => setActiveTab('js')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-t-lg transition-all flex items-center gap-1.5 ${
-                activeTab === 'js'
-                  ? 'bg-slate-900 text-amber-400 border-t-2 border-amber-500 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
-              }`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                fontSize: '12px',
+                fontWeight: 700,
+                borderTopLeftRadius: '8px',
+                borderTopRightRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                background: activeTab === 'js' ? '#0b1120' : 'transparent',
+                color: activeTab === 'js' ? '#facc15' : '#94a3b8',
+                borderTop: activeTab === 'js' ? '2px solid #eab308' : '2px solid transparent',
+              }}
             >
-              <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#eab308', display: 'inline-block' }} />
               script.js
             </button>
 
-            <div className="ml-auto flex items-center gap-2 pr-2 text-xs text-slate-400">
-              <label className="flex items-center gap-1 cursor-pointer select-none">
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px', paddingRight: '6px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', userSelect: 'none', fontSize: '11px', color: '#94a3b8' }}>
                 <input
                   type="checkbox"
                   checked={autoRun}
                   onChange={(e) => setAutoRun(e.target.checked)}
-                  className="rounded text-cyan-500 focus:ring-0 w-3.5 h-3.5 bg-slate-800 border-slate-700"
+                  style={{ accentColor: '#0ea5e9', cursor: 'pointer' }}
                 />
-                <span className="text-[11px] text-slate-400">Live</span>
+                <span>Live</span>
               </label>
             </div>
           </div>
 
           {/* Active Code Area */}
-          <div className="relative flex-1 p-3 font-mono text-sm">
+          <div style={{ position: 'relative', flex: 1, padding: '12px', minHeight: '300px' }}>
             {activeTab === 'html' && (
               <textarea
                 value={htmlCode}
                 onChange={(e) => setHtmlCode(e.target.value)}
-                className="w-full h-full min-h-[300px] bg-transparent text-orange-200 outline-none resize-none font-mono text-xs leading-relaxed selection:bg-orange-900/60"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  minHeight: '280px',
+                  background: 'transparent',
+                  color: '#fed7aa',
+                  border: 'none',
+                  outline: 'none',
+                  resize: 'none',
+                  fontFamily: 'monospace',
+                  fontSize: '13px',
+                  lineHeight: 1.6,
+                }}
                 spellCheck={false}
                 placeholder="Write HTML here..."
               />
@@ -209,7 +336,19 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({
               <textarea
                 value={cssCode}
                 onChange={(e) => setCssCode(e.target.value)}
-                className="w-full h-full min-h-[300px] bg-transparent text-cyan-200 outline-none resize-none font-mono text-xs leading-relaxed selection:bg-cyan-900/60"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  minHeight: '280px',
+                  background: 'transparent',
+                  color: '#bae6fd',
+                  border: 'none',
+                  outline: 'none',
+                  resize: 'none',
+                  fontFamily: 'monospace',
+                  fontSize: '13px',
+                  lineHeight: 1.6,
+                }}
                 spellCheck={false}
                 placeholder="Write CSS here..."
               />
@@ -218,7 +357,19 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({
               <textarea
                 value={jsCode}
                 onChange={(e) => setJsCode(e.target.value)}
-                className="w-full h-full min-h-[300px] bg-transparent text-amber-200 outline-none resize-none font-mono text-xs leading-relaxed selection:bg-amber-900/60"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  minHeight: '280px',
+                  background: 'transparent',
+                  color: '#fef08a',
+                  border: 'none',
+                  outline: 'none',
+                  resize: 'none',
+                  fontFamily: 'monospace',
+                  fontSize: '13px',
+                  lineHeight: 1.6,
+                }}
                 spellCheck={false}
                 placeholder="Write JavaScript here..."
               />
@@ -227,22 +378,44 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({
         </div>
 
         {/* Right Side: Sandboxed Preview */}
-        <div className="flex flex-col bg-white">
-          <div className="bg-slate-100 border-b border-slate-200 px-4 py-2 flex items-center justify-between text-xs text-slate-600 font-medium">
-            <span className="flex items-center gap-1.5">
-              <Eye className="w-3.5 h-3.5 text-slate-500" />
+        <div style={{ display: 'flex', flexDirection: 'column', background: '#ffffff', minHeight: '320px' }}>
+          <div
+            style={{
+              background: '#f1f5f9',
+              borderBottom: '1px solid #e2e8f0',
+              padding: '8px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '12px',
+              color: '#475569',
+              fontWeight: 600,
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Eye className="w-3.5 h-3.5" style={{ color: '#64748b' }} />
               {language === 'my' ? 'တိုက်ရိုက်အဖြေပြကွက် (Live Preview)' : 'Live Preview'}
             </span>
-            <span className="text-[11px] bg-slate-200/80 text-slate-600 px-2 py-0.5 rounded-full font-mono">
+            <span style={{ fontSize: '10.5px', background: '#e2e8f0', color: '#475569', padding: '2px 8px', borderRadius: '9999px', fontFamily: 'monospace' }}>
               Sandboxed
             </span>
           </div>
-          <div className="flex-1 w-full h-full min-h-[320px] bg-white relative">
+          <div style={{ flex: 1, width: '100%', height: '100%', minHeight: '280px', position: 'relative', background: '#ffffff' }}>
             <iframe
               title="Code Preview"
               srcDoc={previewSrcDoc}
               sandbox="allow-scripts"
-              className="w-full h-full border-0 absolute inset-0 bg-white"
+              style={{
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: '#ffffff',
+              }}
             />
           </div>
         </div>
