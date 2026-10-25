@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
 import { MazeScene } from '../game/MazeScene';
-import { MazeLevel } from '../../../types/maze.types';
+import { MazeLevel, Heading } from '../../../types/maze.types';
 
 interface PhaserMazeGameProps {
   level: MazeLevel;
   robotPos: number;
   highlightIndices: number[];
+  heading?: Heading;
   onSceneReady?: (scene: MazeScene) => void;
 }
 
@@ -14,6 +15,7 @@ export const PhaserMazeGame: React.FC<PhaserMazeGameProps> = ({
   level,
   robotPos,
   highlightIndices,
+  heading = 'north',
   onSceneReady,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -69,6 +71,13 @@ export const PhaserMazeGame: React.FC<PhaserMazeGameProps> = ({
       sceneRef.current.animateMove(robotPos);
     }
   }, [robotPos]);
+
+  // Update robot orientation heading
+  useEffect(() => {
+    if (sceneRef.current && heading) {
+      sceneRef.current.setHeading(heading);
+    }
+  }, [heading]);
 
   // React to hint path highlights
   useEffect(() => {

@@ -108,7 +108,7 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         : [...prev.completedMazeLevels, levelId];
 
       const nextUnlocked = [...prev.unlockedMazeLevels];
-      if (levelId < 10 && !nextUnlocked.includes(levelId + 1)) {
+      if (levelId < 15 && !nextUnlocked.includes(levelId + 1)) {
         nextUnlocked.push(levelId + 1);
         const unlockMsg = lang === 'my'
           ? `🔓 အဆင့် ${levelId + 1} ကို ဖွင့်လှစ်လိုက်ပါပြီ!`

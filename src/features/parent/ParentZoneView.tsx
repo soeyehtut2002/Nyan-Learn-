@@ -43,7 +43,7 @@ export const ParentZoneView: React.FC = () => {
             <span className="stat-label">Mastery Rank</span>
           </div>
           <div className="stat-card">
-            <span className="stat-value">{state.completedMazeLevels.length}/10</span>
+            <span className="stat-value">{state.completedMazeLevels.length}/15</span>
             <span className="stat-label">Maze Levels Cleared</span>
           </div>
           <div className="stat-card">

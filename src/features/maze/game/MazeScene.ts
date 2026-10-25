@@ -146,7 +146,18 @@ export class MazeScene extends Phaser.Scene {
     });
   }
 
-  public resetPosition(startPos: number) {
+  public setHeading(heading: 'north' | 'east' | 'south' | 'west') {
+    if (!this.robotSprite) return;
+    const angles = { north: 0, east: 90, south: 180, west: 270 };
+    this.tweens.add({
+      targets: this.robotSprite,
+      angle: angles[heading],
+      duration: 140,
+      ease: 'Sine.easeOut'
+    });
+  }
+
+  public resetPosition(startPos: number, heading: 'north' | 'east' | 'south' | 'west' = 'north') {
     if (!this.robotSprite) return;
     const size = 5;
     const padding = 6;
@@ -156,5 +167,7 @@ export class MazeScene extends Phaser.Scene {
     this.robotSprite.x = this.gridOffset + col * (tileWidth + padding) + tileWidth / 2;
     this.robotSprite.y = this.gridOffset + row * (tileWidth + padding) + tileWidth / 2;
     this.robotSprite.setScale(1);
+    const angles = { north: 0, east: 90, south: 180, west: 270 };
+    this.robotSprite.setAngle(angles[heading] || 0);
   }
 }
