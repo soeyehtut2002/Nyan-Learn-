@@ -1,7 +1,7 @@
 export const en = {
   // Brand & Header
-  'brand.title': 'CodeQuest',
-  'brand.tagline': 'AI & Coding Adventure',
+  'brand.title': 'Nyan Learn',
+  'brand.tagline': 'Learn Through Play. Build the Future.',
   'header.safety': '100% Kid-Safe',
   'header.sound_on': 'Sound Enabled',
   'header.sound_off': 'Sound Muted',
@@ -97,5 +97,5 @@ export const en = {
   'parent.reset_btn': '↻ Reset Demo Progress',
 
   // Footer
-  'footer.text': 'CodeQuest V2 · Offline Learning progress is stored locally in this browser.'
+  'footer.text': 'Nyan Learn (ဉာဏ်လမ်း) · Offline learning progress is stored locally in this browser.'
 };

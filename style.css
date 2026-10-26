@@ -95,6 +95,25 @@ input:focus-visible {
   color: var(--ink);
 }
 
+.brand-logo-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 4px;
+  box-shadow: 0 6px 18px rgba(108, 71, 255, 0.15);
+  border: 1.5px solid var(--border-line, #e3e7f8);
+  animation: gentle-bob 3s ease-in-out infinite alternate;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brand-wrapper:hover .brand-logo-img {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 10px 24px rgba(108, 71, 255, 0.25);
+}
+
 .brand-logo {
   width: 48px;
   height: 48px;

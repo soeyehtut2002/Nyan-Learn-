@@ -44,10 +44,18 @@ export const App: React.FC = () => {
           onClick={() => handleNavigate('home')}
           style={{ cursor: 'pointer' }}
         >
-          <div className="brand-logo" aria-hidden="true">✦</div>
+          <img
+            src="/logo.png"
+            alt="Nyan Learn Logo"
+            className="brand-logo-img"
+          />
           <div className="brand-text">
-            <h1>CodeQuest<span>.</span></h1>
-            <div className="brand-tagline">{t('brandTagline')}</div>
+            <h1 style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+              Nyan Learn<span style={{ color: 'var(--purple-main, #6c47ff)' }}>.</span>
+            </h1>
+            <div className="brand-tagline">
+              {lang === 'my' ? 'ဉာဏ်လမ်း • ပျော်ရွှင်စွာ သင်ယူစို့' : 'Learn Through Play. Build the Future.'}
+            </div>
           </div>
         </div>
 
@@ -189,7 +197,7 @@ export const App: React.FC = () => {
       </div>
 
       <footer className="footer" style={{ textAlign: 'center', marginTop: '40px', padding: '20px 0', borderTop: '1px solid #e2e8f0', color: 'var(--ink-secondary)', fontSize: '13px' }}>
-        <p>CodeQuest — Empowering Young Creators with Playful Programming & AI Literacy 🚀</p>
+        <p>Nyan Learn (ဉာဏ်လမ်း) — Empowering Young Creators with Playful Programming & AI Literacy 🚀</p>
       </footer>
     </div>
   );

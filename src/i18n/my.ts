@@ -1,7 +1,7 @@
 export const my = {
   // Brand & Header
-  'brand.title': 'CodeQuest',
-  'brand.tagline': 'AI & Coding စွန့်စားခန်း',
+  'brand.title': 'Nyan Learn (ဉာဏ်လမ်း)',
+  'brand.tagline': 'ဉာဏ်လမ်း • ပျော်ရွှင်စွာ သင်ယူစို့',
   'header.safety': 'ကလေးများအတွက် လုံခြုံမှုရှိ',
   'header.sound_on': 'အသံဖွင့်ထားပါသည်',
   'header.sound_off': 'အသံပိတ်ထားပါသည်',
@@ -97,5 +97,5 @@ export const my = {
   'parent.reset_btn': '↻ Demo Progress ပြန်စမယ်',
 
   // Footer
-  'footer.text': 'CodeQuest V2 · သင်ယူမှုမှတ်တမ်းကို ဒီစက်ရဲ့ Browser ထဲမှာပဲ လုံခြုံစွာ သိမ်းဆည်းထားပါတယ်။'
+  'footer.text': 'Nyan Learn (ဉာဏ်လမ်း) · သင်ယူမှုမှတ်တမ်းကို ဒီစက်ရဲ့ Browser ထဲမှာပဲ လုံခြုံစွာ သိမ်းဆည်းထားပါတယ်။'
 };
