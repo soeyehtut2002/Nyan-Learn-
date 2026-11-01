@@ -85,10 +85,10 @@ export const programmingCourse: CourseData = {
         instructionsEn: 'Drag or click the steps into the correct order so Byte can start the day safely!',
         instructionsMy: 'Byte ဘေးကင်းစွာ နိုးထနိုင်စေရန် ညွှန်ကြားချက်များကို မှန်ကန်သော အစီအစဉ်အတိုင်း စီပေးပါ။',
         initialData: [
-          { id: 's3', textEn: '3. Step out of charging dock', textMy: '၃။ အားသွင်းခုံပေါ်မှ ဆင်းပါ' },
-          { id: 's1', textEn: '1. Power on main battery', textMy: '၁။ အဓိက ဘက်ထရီ စက်နိုးပါ' },
-          { id: 's4', textEn: '4. Say "Ready to learn!"', textMy: '၄။ "လေ့လာဖို့ အဆင်သင့်ပါ!" ဟု ပြောပါ' },
-          { id: 's2', textEn: '2. Check safety sensors', textMy: '၂။ အာရုံခံကိရိယာများ စစ်ဆေးပါ' }
+          { id: 's3', textEn: 'Step out of charging dock', textMy: 'အားသွင်းခုံပေါ်မှ ဆင်းပါ' },
+          { id: 's1', textEn: 'Power on main battery', textMy: 'အဓိက ဘက်ထရီ စက်နိုးပါ' },
+          { id: 's4', textEn: 'Say "Ready to learn!"', textMy: '"လေ့လာဖို့ အဆင်သင့်ပါ!" ဟု ပြောပါ' },
+          { id: 's2', textEn: 'Check safety sensors', textMy: 'အာရုံခံကိရိယာများ စစ်ဆေးပါ' }
         ],
         solution: ['s1', 's2', 's3', 's4']
       },

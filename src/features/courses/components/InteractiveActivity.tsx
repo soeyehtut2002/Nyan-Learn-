@@ -6,6 +6,9 @@ import {
   AlertTriangle,
   Lock,
   Zap,
+  Play,
+  Sparkles,
+  Shield,
 } from './Icons';
 import { InteractiveActivityData } from '../../../types/course.types';
 import { CodePlayground } from './CodePlayground';
@@ -17,6 +20,12 @@ interface InteractiveActivityProps {
   onCompleted?: () => void;
 }
 
+// Clean any leading numbering prefixes like "1. ", "3. ", "၁။ ", "၂။ "
+export const cleanItemLabel = (text: string): string => {
+  if (!text) return '';
+  return text.replace(/^(\d+|[၁-၉]+)[\.\၊\။\s\-]+/, '').trim();
+};
+
 export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
   activity,
   language,
@@ -24,6 +33,8 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
 }) => {
   const [completed, setCompleted] = useState(false);
   const [errorFeedback, setErrorFeedback] = useState<string | null>(null);
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simStepIdx, setSimStepIdx] = useState<number | null>(null);
 
   // 1. Sequence Sorter state
   const getSequenceList = () => {
@@ -54,46 +65,65 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
     return [];
   });
 
-  // 3. Password checker state
+  // 3. Privacy Sorter state (Safe vs Secret)
+  const [privacySafeList, setPrivacySafeList] = useState<any[]>([]);
+  const [privacySecretList, setPrivacySecretList] = useState<any[]>([]);
+  const [privacyRemaining, setPrivacyRemaining] = useState<any[]>(() => {
+    if (activity.type === 'privacy-sorter' && Array.isArray(activity.initialData)) {
+      return [...activity.initialData];
+    }
+    return [];
+  });
+
+  // 4. Phishing Detector state
+  const [selectedPhishingIdx, setSelectedPhishingIdx] = useState<number | null>(null);
+  const [phishingAnswered, setPhishingAnswered] = useState(false);
+
+  // 5. Password checker state
   const [passwordInput, setPasswordInput] = useState('');
 
-  // 4. Condition tester state
+  // 6. Condition tester state
   const [conditionToggle, setConditionToggle] = useState(false);
+
+  // 7. Loop counter state
+  const [loopCount, setLoopCount] = useState(0);
 
   // Reset when activity changes
   useEffect(() => {
-    setCompleted(false);
-    setErrorFeedback(null);
-    setSequenceItems(getSequenceList());
-    const cats = getCategories();
-    setCategories(cats);
-    const map: { [c: string]: any[] } = {};
-    cats.forEach((c) => (map[c] = []));
-    setAssignedMap(map);
-    if (activity.type === 'classification-sorter' && Array.isArray(activity.initialData)) {
-      setUnassignedItems([...activity.initialData]);
-    }
-    setPasswordInput('');
-    setConditionToggle(false);
+    handleReset();
   }, [activity]);
 
   const handleReset = () => {
     setCompleted(false);
     setErrorFeedback(null);
+    setIsSimulating(false);
+    setSimStepIdx(null);
     setSequenceItems(getSequenceList());
+
+    const cats = getCategories();
+    setCategories(cats);
     const map: { [c: string]: any[] } = {};
-    categories.forEach((c) => (map[c] = []));
+    cats.forEach((c) => (map[c] = []));
     setAssignedMap(map);
+
     if (activity.type === 'classification-sorter' && Array.isArray(activity.initialData)) {
       setUnassignedItems([...activity.initialData]);
     }
+    if (activity.type === 'privacy-sorter' && Array.isArray(activity.initialData)) {
+      setPrivacyRemaining([...activity.initialData]);
+      setPrivacySafeList([]);
+      setPrivacySecretList([]);
+    }
+    setSelectedPhishingIdx(null);
+    setPhishingAnswered(false);
     setPasswordInput('');
     setConditionToggle(false);
+    setLoopCount(0);
   };
 
   // Move Sequence Item
   const moveSequenceItem = (index: number, direction: 'up' | 'down') => {
-    if (completed) return;
+    if (completed || isSimulating) return;
     const newItems = [...sequenceItems];
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= newItems.length) return;
@@ -101,9 +131,10 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
     newItems[index] = newItems[targetIndex];
     newItems[targetIndex] = temp;
     setSequenceItems(newItems);
+    setErrorFeedback(null);
   };
 
-  // Check Sequence Order
+  // Check Sequence Order with visual stepping
   const checkSequence = () => {
     if (!activity.solution || !Array.isArray(activity.solution)) {
       setCompleted(true);
@@ -117,14 +148,26 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
     });
 
     if (isMatch) {
-      setCompleted(true);
+      // Step simulation animation
+      setIsSimulating(true);
       setErrorFeedback(null);
-      onCompleted?.();
+      let step = 0;
+      const interval = setInterval(() => {
+        if (step < sequenceItems.length) {
+          setSimStepIdx(step);
+          step++;
+        } else {
+          clearInterval(interval);
+          setIsSimulating(false);
+          setCompleted(true);
+          onCompleted?.();
+        }
+      }, 350);
     } else {
       setErrorFeedback(
         language === 'my'
-          ? 'အစီအစဉ် မမှန်သေးပါ။ အဆင့်များကို သေချာပြန်စီစဉ်ကြည့်ပါဦး!'
-          : 'Order is not quite right yet. Re-read the steps and try again!'
+          ? 'အစီအစဉ် မမှန်သေးပါ! ဥပမာ- စက်မဖွင့်ဘဲ အပြင်မထွက်နိုင်သလို အဆင့်များကို သေချာစဉ်းစားပြီး ထပ်မံရွှေ့ပေးပါဦး။'
+          : 'Steps are not in the right order yet! Review the logic and try moving the steps again.'
       );
     }
   };
@@ -153,8 +196,8 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
     if (unassignedItems.length > 0) {
       setErrorFeedback(
         language === 'my'
-          ? 'ကျေးဇူးပြု၍ ပစ္စည်းအားလုံးကို အကွက်ထဲသို့ အရင်ထည့်ပါ!'
-          : 'Please sort all items into a category first!'
+          ? 'ကျေးဇူးပြု၍ ပစ္စည်းအားလုံးကို အကွက်ထဲသို့ အရင်ထည့်သွင်းပေးပါ!'
+          : 'Please sort all items into a box before checking!'
       );
       return;
     }
@@ -176,8 +219,70 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
     } else {
       setErrorFeedback(
         language === 'my'
-          ? 'အချို့ပစ္စည်းများ မှားယွင်းနေပါသည်။ ပြန်လည်စစ်ဆေးကြည့်ပါ!'
-          : 'Some items are in the wrong category. Review and try again!'
+          ? 'အချို့အချက်များ နေရာမှားနေပါသည်။ ပြန်လည်စစ်ဆေးပြီး ပြင်ဆင်ကြည့်ပါ!'
+          : 'Some items are in the wrong box. Review and try again!'
+      );
+    }
+  };
+
+  // Privacy Sorter Assign
+  const handlePrivacySort = (item: any, destination: 'safe' | 'secret') => {
+    if (completed) return;
+    setPrivacyRemaining((prev) => prev.filter((i) => i !== item));
+    if (destination === 'safe') {
+      setPrivacySafeList((prev) => [...prev, item]);
+    } else {
+      setPrivacySecretList((prev) => [...prev, item]);
+    }
+  };
+
+  const checkPrivacy = () => {
+    if (privacyRemaining.length > 0) {
+      setErrorFeedback(
+        language === 'my'
+          ? 'အချက်အလက် အားလုံးကို ဘေးကင်းသည် သို့မဟုတ် လျှို့ဝှက်သေတ္တာထဲသို့ ခွဲခြားပေးပါ!'
+          : 'Please categorize all items into Safe or Secret first!'
+      );
+      return;
+    }
+
+    const safeCorrect = privacySafeList.every((i) => i.isSafe === true);
+    const secretCorrect = privacySecretList.every((i) => i.isSafe === false);
+
+    if (safeCorrect && secretCorrect) {
+      setCompleted(true);
+      setErrorFeedback(null);
+      onCompleted?.();
+    } else {
+      setErrorFeedback(
+        language === 'my'
+          ? 'အချို့ ကိုယ်ရေးအချက်အလက်များ (နေရပ်၊ ဖုန်းနံပါတ် စသည်) ကို လျှို့ဝှက်သေတ္တာထဲသို့သာ ထည့်ရပါမည်!'
+          : 'Remember: Private data like your home address or phone number belongs in the Secret Vault!'
+      );
+    }
+  };
+
+  // Phishing Detector Choice
+  const handlePhishingSelect = (idx: number, item: any) => {
+    if (phishingAnswered) return;
+    setSelectedPhishingIdx(idx);
+    setPhishingAnswered(true);
+
+    const isTrap = item.isPhishing === true || item.isSafe === false;
+    const wantsTrap = activity.instructionsEn?.toLowerCase().includes('trap') ||
+      activity.instructionsEn?.toLowerCase().includes('phishing');
+
+    const isUserCorrect = wantsTrap ? isTrap : !isTrap;
+
+    if (isUserCorrect) {
+      setCompleted(true);
+      setErrorFeedback(null);
+      onCompleted?.();
+    } else {
+      setErrorFeedback(
+        language === 'my'
+          ? 'သတိထားပါ! မက်ဆေ့ခ်ျ သို့မဟုတ် Link ၏ အရေးပေါ်တောင်းဆိုမှုများနှင့် သံသယဖြစ်ဖွယ် အချက်များကို သေချာပြန်ဖတ်ပါဦး!'
+          : 'Not quite! Look for urgency tricks, fake prizes, or suspicious website links.'
       );
     }
   };
@@ -200,10 +305,11 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
   const instructions = language === 'my' ? activity.instructionsMy : activity.instructionsEn;
 
   const getItemLabel = (item: any) => {
-    if (typeof item === 'string') return item;
-    if (language === 'my' && item.textMy) return item.textMy;
-    if (item.textEn) return item.textEn;
-    return item.item || item.task || item.measure || item.name || JSON.stringify(item);
+    if (typeof item === 'string') return cleanItemLabel(item);
+    if (language === 'my' && item.textMy) return cleanItemLabel(item.textMy);
+    if (item.textEn) return cleanItemLabel(item.textEn);
+    const raw = item.item || item.task || item.measure || item.name || item.text || JSON.stringify(item);
+    return cleanItemLabel(raw);
   };
 
   return (
@@ -231,7 +337,7 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
               }}
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
-              {language === 'my' ? 'ပြီးမြောက်သည် 🎉' : 'Mission Completed! 🎉'}
+              {language === 'my' ? 'မစ်ရှင် အောင်မြင်သည်! 🎉' : 'Mission Completed! 🎉'}
             </span>
           )}
         </div>
@@ -262,14 +368,15 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
             background: '#fef2f2',
             border: '2px solid #fca5a5',
             borderRadius: '16px',
-            padding: '12px 16px',
+            padding: '12px 18px',
             color: '#b91c1c',
-            fontSize: '13.5px',
+            fontSize: '14px',
             fontWeight: 700,
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '12px',
             marginBottom: '18px',
+            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.1)',
           }}
         >
           <AlertTriangle className="w-5 h-5" style={{ color: '#ef4444', flexShrink: 0 }} />
@@ -278,58 +385,83 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
       )}
 
       {/* =========================================================================
-          TYPE 1: SEQUENCE SORTER (Step-by-step ordering)
+          TYPE 1: SEQUENCE SORTER (Step-by-step Ordering with Scratch-style Blocks)
           ========================================================================= */}
       {activity.type === 'sequence-sorter' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {sequenceItems.map((item, idx) => (
-              <div
-                key={idx}
-                className={`sequence-step-card ${completed ? 'completed' : ''}`}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
-                  <span className={`step-num-badge ${completed ? 'completed' : ''}`}>
-                    {idx + 1}
-                  </span>
-                  <span style={{ fontSize: '14.5px', fontWeight: 700, color: '#1e2448', lineHeight: 1.4 }}>
-                    {getItemLabel(item)}
-                  </span>
-                </div>
-
-                {!completed && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-                    <button
-                      onClick={() => moveSequenceItem(idx, 'up')}
-                      disabled={idx === 0}
-                      className="step-arrow-btn up"
-                      title={language === 'my' ? 'အပေါ်သို့ ရွှေ့မည်' : 'Move Up'}
-                    >
-                      ▲
-                    </button>
-                    <button
-                      onClick={() => moveSequenceItem(idx, 'down')}
-                      disabled={idx === sequenceItems.length - 1}
-                      className="step-arrow-btn down"
-                      title={language === 'my' ? 'အောက်သို့ ရွှေ့မည်' : 'Move Down'}
-                    >
-                      ▼
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
+        <div className="sequence-sorter-container">
+          {/* Start Point Indicator */}
+          <div className="sequence-lane-indicator start">
+            <span className="lane-dot green" />
+            <span className="lane-label">
+              🟢 {language === 'my' ? 'စတင်သည့်အဆင့် (START - ပထမဆုံး အဆင့်)' : 'START HERE (Step 1 - First)'}
+            </span>
           </div>
 
+          {/* Draggable / Orderable Step Blocks */}
+          <div className="sequence-blocks-list">
+            {sequenceItems.map((item, idx) => {
+              const isSimActive = isSimulating && simStepIdx === idx;
+              return (
+                <div
+                  key={item.id || idx}
+                  className={`sequence-block-card ${completed ? 'completed' : ''} ${isSimActive ? 'simulating' : ''}`}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
+                    <div className={`step-badge-circle ${completed ? 'completed' : ''} ${isSimActive ? 'simulating' : ''}`}>
+                      {completed ? '✓' : idx + 1}
+                    </div>
+                    <div className="step-text-content">
+                      <span className="step-main-text">{getItemLabel(item)}</span>
+                    </div>
+                  </div>
+
+                  {!completed && (
+                    <div className="step-action-buttons">
+                      <button
+                        onClick={() => moveSequenceItem(idx, 'up')}
+                        disabled={idx === 0 || isSimulating}
+                        className="arrow-move-btn up"
+                        title={language === 'my' ? 'အပေါ်သို့ ရွှေ့မည်' : 'Move Up'}
+                      >
+                        ▲ {language === 'my' ? 'အပေါ်' : 'Up'}
+                      </button>
+                      <button
+                        onClick={() => moveSequenceItem(idx, 'down')}
+                        disabled={idx === sequenceItems.length - 1 || isSimulating}
+                        className="arrow-move-btn down"
+                        title={language === 'my' ? 'အောက်သို့ ရွှေ့မည်' : 'Move Down'}
+                      >
+                        ▼ {language === 'my' ? 'အောက်' : 'Down'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Finish Point Indicator */}
+          <div className="sequence-lane-indicator finish">
+            <span className="lane-dot flag" />
+            <span className="lane-label">
+              🏁 {language === 'my' ? 'ပန်းတိုင်ရောက်သည့်အဆင့် (FINISH - နောက်ဆုံး အဆင့်)' : 'FINISH GOAL (Last Step)'}
+            </span>
+          </div>
+
+          {/* Check Button */}
           {!completed && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
               <button
                 onClick={checkSequence}
-                className="kid-btn kid-btn-primary"
-                style={{ width: '100%', maxWidth: '340px' }}
+                disabled={isSimulating}
+                className="kid-btn kid-btn-primary test-run-btn"
               >
-                <CheckCircle2 className="w-5 h-5" />
-                <span>{language === 'my' ? '✨ အဖြေစစ်ဆေးမည်' : '✨ Check Order'}</span>
+                <Play className="w-5 h-5" />
+                <span>
+                  {isSimulating
+                    ? (language === 'my' ? 'စက်ရုပ် လိုက်နာစမ်းသပ်နေသည်...' : 'Simulating Byte...')
+                    : (language === 'my' ? '🚀 စက်ရုပ်ကို မောင်းနှင်စစ်ဆေးမည် (Test Run)' : '🚀 Test Run Order!')}
+                </span>
               </button>
             </div>
           )}
@@ -337,55 +469,28 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
       )}
 
       {/* =========================================================================
-          TYPE 2: CLASSIFICATION SORTER
+          TYPE 2: CLASSIFICATION SORTER (Toy Baskets)
           ========================================================================= */}
       {activity.type === 'classification-sorter' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+        <div className="classification-container">
           {/* Unassigned items pool */}
           {unassignedItems.length > 0 && (
-            <div
-              style={{
-                background: '#f8fafc',
-                border: '2px solid #e2e8f0',
-                borderRadius: '20px',
-                padding: '16px',
-              }}
-            >
-              <span
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 800,
-                  color: '#475569',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                  display: 'block',
-                  marginBottom: '10px',
-                }}
-              >
-                {language === 'my' ? 'ခွဲခြားရမည့် အချက်များ (နှိပ်၍ အကွက်ရွေးပါ):' : 'Items to Classify (Click to assign):'}
+            <div className="unassigned-pool-box">
+              <span className="pool-header-title">
+                📦 {language === 'my' ? 'ခွဲခြားရမည့် အချက်များ (အကွက်ရွေးချယ်ပါ):' : 'Items to Sort (Click button to assign):'}
               </span>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+              <div className="pool-items-flex">
                 {unassignedItems.map((item, idx) => (
-                  <div key={idx} className="kid-chip-item">
-                    <span>{getItemLabel(item)}</span>
-                    <div style={{ display: 'flex', gap: '4px', marginLeft: '6px', paddingLeft: '6px', borderLeft: '1.5px solid #cbd5e1' }}>
+                  <div key={idx} className="pool-card-chip">
+                    <span className="chip-text">{getItemLabel(item)}</span>
+                    <div className="chip-assign-actions">
                       {categories.map((cat) => (
                         <button
                           key={cat}
                           onClick={() => assignCategory(item, cat)}
-                          style={{
-                            background: '#e0e7ff',
-                            border: 'none',
-                            color: '#4338ca',
-                            fontSize: '11px',
-                            fontWeight: 800,
-                            padding: '3px 8px',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                          }}
-                          title={`Sort to ${cat}`}
+                          className="assign-cat-btn"
                         >
-                          → {cat}
+                          → {cat.toUpperCase()}
                         </button>
                       ))}
                     </div>
@@ -395,21 +500,21 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
             </div>
           )}
 
-          {/* Categories Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+          {/* Categories Grid (Toy Baskets) */}
+          <div className="categories-basket-grid">
             {categories.map((cat) => (
-              <div key={cat} className="kid-category-box">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '8px', marginBottom: '10px', borderBottom: '1.5px solid #f1f5f9' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 800, color: '#4f46e5', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    📦 {cat}
+              <div key={cat} className="toy-basket-box">
+                <div className="basket-header">
+                  <span className="basket-title">
+                    📥 {cat.toUpperCase()}
                   </span>
-                  <span style={{ fontSize: '11.5px', fontWeight: 800, background: '#e0e7ff', color: '#4338ca', padding: '2px 8px', borderRadius: '9999px' }}>
+                  <span className="basket-count">
                     {(assignedMap[cat] || []).length} items
                   </span>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', flex: 1, alignItems: 'flex-start' }}>
+                <div className="basket-contents">
                   {(assignedMap[cat] || []).length === 0 ? (
-                    <span style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic', padding: '6px 0' }}>
+                    <span className="basket-empty-hint">
                       {language === 'my' ? 'ဤနေရာသို့ ထည့်ပါ' : 'Drop items here'}
                     </span>
                   ) : (
@@ -417,22 +522,10 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
                       <span
                         key={itemIdx}
                         onClick={() => unassignCategory(item, cat)}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          padding: '6px 12px',
-                          borderRadius: '10px',
-                          fontSize: '12.5px',
-                          fontWeight: 700,
-                          background: '#eef2ff',
-                          border: '1.5px solid #c7d2fe',
-                          color: '#3730a3',
-                          cursor: 'pointer',
-                        }}
+                        className="basket-item-pill"
                         title="Click to remove"
                       >
-                        {getItemLabel(item)} <XCircle className="w-3.5 h-3.5" style={{ color: '#94a3b8' }} />
+                        {getItemLabel(item)} <XCircle className="w-3.5 h-3.5" />
                       </span>
                     ))
                   )}
@@ -442,14 +535,14 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
           </div>
 
           {!completed && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '6px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '14px' }}>
               <button
                 onClick={checkClassification}
                 className="kid-btn kid-btn-primary"
                 style={{ width: '100%', maxWidth: '340px' }}
               >
                 <CheckCircle2 className="w-5 h-5" />
-                <span>{language === 'my' ? '✨ အဖြေစစ်ဆေးမည်' : '✨ Check Classification'}</span>
+                <span>{language === 'my' ? '✨ အဖြေစစ်ဆေးမည်' : '✨ Check Answers'}</span>
               </button>
             </div>
           )}
@@ -457,20 +550,240 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
       )}
 
       {/* =========================================================================
-          TYPE 3: CODE SANDBOX (HTML/CSS/JS Playground)
+          TYPE 3: PRIVACY SORTER (Safe to Share vs Secret Vault)
           ========================================================================= */}
-      {activity.type === 'code-sandbox' && (
-        <CodePlayground
-          initialHtml={activity.initialData?.html}
-          initialCss={activity.initialData?.css}
-          initialJs={activity.initialData?.js}
-          title={title}
-          language={language}
-        />
+      {activity.type === 'privacy-sorter' && (
+        <div className="privacy-sorter-container">
+          {/* Remaining Items */}
+          {privacyRemaining.length > 0 && (
+            <div className="unassigned-pool-box">
+              <span className="pool-header-title">
+                🛡️ {language === 'my' ? 'ခွဲခြားရမည့် အချက်အလက်များ:' : 'Information Items to Classify:'}
+              </span>
+              <div className="pool-items-flex">
+                {privacyRemaining.map((item, idx) => (
+                  <div key={idx} className="pool-card-chip">
+                    <span className="chip-text">{item.item || getItemLabel(item)}</span>
+                    <div className="chip-assign-actions">
+                      <button
+                        onClick={() => handlePrivacySort(item, 'safe')}
+                        className="assign-cat-btn safe-btn"
+                      >
+                        🟢 {language === 'my' ? 'မျှဝေနိုင်သည်' : 'Safe to Share'}
+                      </button>
+                      <button
+                        onClick={() => handlePrivacySort(item, 'secret')}
+                        className="assign-cat-btn secret-btn"
+                      >
+                        🔒 {language === 'my' ? 'လျှို့ဝှက်သေတ္တာ' : 'Secret Vault'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 2 Big Vault Boxes */}
+          <div className="privacy-vaults-grid">
+            {/* Safe Box */}
+            <div className="privacy-vault-box safe">
+              <div className="vault-header">
+                <span className="vault-title green">
+                  🟢 {language === 'my' ? 'မျှဝေရန် ဘေးကင်းသည် (Safe)' : 'Safe to Share with Friends'}
+                </span>
+                <span className="basket-count">{privacySafeList.length} items</span>
+              </div>
+              <div className="vault-items">
+                {privacySafeList.length === 0 ? (
+                  <span className="basket-empty-hint">
+                    {language === 'my' ? 'နှစ်သက်သောအရောင်၊ အစားအစာ စသည်များ...' : 'Favorite foods, colors, sports...'}
+                  </span>
+                ) : (
+                  privacySafeList.map((item, idx) => (
+                    <span key={idx} className="basket-item-pill safe">
+                      {item.item || getItemLabel(item)}
+                    </span>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Secret Box */}
+            <div className="privacy-vault-box secret">
+              <div className="vault-header">
+                <span className="vault-title red">
+                  🔒 {language === 'my' ? 'လျှို့ဝှက်သေတ္တာ (Keep Secret)' : 'Secret Vault (Never Share!)'}
+                </span>
+                <span className="basket-count">{privacySecretList.length} items</span>
+              </div>
+              <div className="vault-items">
+                {privacySecretList.length === 0 ? (
+                  <span className="basket-empty-hint">
+                    {language === 'my' ? 'နေရပ်လိပ်စာ၊ စကားဝှက်၊ ဖုန်းနံပါတ်...' : 'Home address, passwords, phone numbers...'}
+                  </span>
+                ) : (
+                  privacySecretList.map((item, idx) => (
+                    <span key={idx} className="basket-item-pill secret">
+                      {item.item || getItemLabel(item)}
+                    </span>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          {!completed && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '14px' }}>
+              <button
+                onClick={checkPrivacy}
+                className="kid-btn kid-btn-primary"
+                style={{ width: '100%', maxWidth: '340px' }}
+              >
+                <Shield className="w-5 h-5" />
+                <span>{language === 'my' ? '🛡️ လုံခြုံမှုစစ်ဆေးမည်' : '🛡️ Check Privacy Safety'}</span>
+              </button>
+            </div>
+          )}
+        </div>
       )}
 
       {/* =========================================================================
-          TYPE 4: PASSWORD CHECKER (Interactive Robot Cyber Shield)
+          TYPE 4: PHISHING DETECTIVE SIMULATOR
+          ========================================================================= */}
+      {activity.type === 'phishing-detector' && (
+        <div className="phishing-container">
+          <div className="phishing-cards-list">
+            {(activity.initialData || []).map((msg: any, idx: number) => {
+              const isSelected = selectedPhishingIdx === idx;
+              const isTrap = msg.isPhishing === true || msg.isSafe === false;
+
+              let cardClass = 'phishing-msg-card';
+              if (phishingAnswered) {
+                if (isTrap) cardClass += ' trap-detected';
+                else if (isSelected && !isTrap) cardClass += ' wrong-selection';
+              } else if (isSelected) {
+                cardClass += ' selected';
+              }
+
+              return (
+                <div
+                  key={idx}
+                  onClick={() => handlePhishingSelect(idx, msg)}
+                  className={cardClass}
+                >
+                  <div className="msg-card-top">
+                    <span className="msg-index-pill">#{idx + 1}</span>
+                    <span className="msg-hint-tag">
+                      {phishingAnswered ? (
+                        isTrap ? '🚨 PHISHING TRAP!' : '✅ SAFE MESSAGE'
+                      ) : (
+                        language === 'my' ? '👆 စစ်ဆေးရန်နှိပ်ပါ' : 'Click to inspect'
+                      )}
+                    </span>
+                  </div>
+
+                  <p className="msg-body-text">{msg.text || getItemLabel(msg)}</p>
+
+                  {phishingAnswered && isTrap && (
+                    <div className="trap-explanation-banner">
+                      ⚠️ {language === 'my'
+                        ? 'ဖမ်းမိပါပြီ! အရေးပေါ်တိုက်တွန်းခြင်း၊ အလကားလက်ဆောင်ဖြင့် မျှားခေါ်ခြင်းသည် Phishing ထောင်ချောက် ဖြစ်သည်။'
+                        : 'Busted! Urgency pressure and free prize claims are classic Phishing traps!'}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          TYPE 5: LOOP COUNTER (Visual Repeat Stars)
+          ========================================================================= */}
+      {activity.type === 'loop-counter' && (
+        <div className="loop-counter-container">
+          <div className="loop-visual-card">
+            <div className="loop-code-pill">
+              <code>for (let i = 1; i &lt;= 5; i++) &#123; collectStar(); &#125;</code>
+            </div>
+
+            <div className="loop-stars-track">
+              {[1, 2, 3, 4, 5].map((starNum) => (
+                <div
+                  key={starNum}
+                  className={`loop-star-circle ${loopCount >= starNum ? 'collected' : ''}`}
+                >
+                  {loopCount >= starNum ? '⭐' : '⚪'}
+                  <span className="star-num-label">#{starNum}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="loop-controls">
+              <button
+                onClick={() => {
+                  const next = Math.min(loopCount + 1, 5);
+                  setLoopCount(next);
+                  if (next >= 5) {
+                    setCompleted(true);
+                    onCompleted?.();
+                  }
+                }}
+                disabled={loopCount >= 5}
+                className="kid-btn kid-btn-primary"
+              >
+                <Sparkles className="w-5 h-5" />
+                <span>
+                  {loopCount < 5
+                    ? (language === 'my' ? `🔄 အကြိမ်ရေ +၁ ထပ်ခါလုပ်မည် (Loop Step ${loopCount + 1})` : `🔄 Repeat Loop Step ${loopCount + 1}`)
+                    : (language === 'my' ? '🎉 ကြယ် ၅ လုံး စုဆောင်းပြီးပါပြီ!' : '🎉 5 Stars Collected!')}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          TYPE 6: CONDITION TESTER (IF/ELSE Visual Toggle)
+          ========================================================================= */}
+      {activity.type === 'condition-tester' && (
+        <div className="condition-tester-container">
+          <div className="condition-visual-box">
+            <div className="condition-toggle-bar">
+              <span className="var-label">let isRaining =</span>
+              <button
+                onClick={() => {
+                  const next = !conditionToggle;
+                  setConditionToggle(next);
+                  setCompleted(true);
+                  onCompleted?.();
+                }}
+                className={`weather-toggle-btn ${conditionToggle ? 'rain' : 'sun'}`}
+              >
+                {conditionToggle ? '🌧️ true (Rainy)' : '☀️ false (Sunny)'}
+              </button>
+            </div>
+
+            <div className="code-branches-block">
+              <div className="code-branch-line">if (isRaining) &#123;</div>
+              <div className={`code-branch-indent ${conditionToggle ? 'active-branch' : ''}`}>
+                <span>☔ takeUmbrella(); // Raincoat & umbrella on!</span>
+              </div>
+              <div className="code-branch-line">&#125; else &#123;</div>
+              <div className={`code-branch-indent ${!conditionToggle ? 'active-branch' : ''}`}>
+                <span>🕶️ wearSunglasses(); // Cool sunglasses on!</span>
+              </div>
+              <div className="code-branch-line">&#125;</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          TYPE 7: PASSWORD CHECKER (Robot Cyber Shield)
           ========================================================================= */}
       {activity.type === 'password-checker' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -490,21 +803,9 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
                   ? 'စမ်းသပ်စကားဝှက် ရိုက်ထည့်ကြည့်ပါ (ဥပမာ- BlueElephant#2026)'
                   : 'Type a practice passphrase (e.g., PurpleTurtle#Jump2026!)'
               }
-              style={{
-                width: '100%',
-                padding: '14px 18px',
-                background: '#ffffff',
-                border: '2px solid #818cf8',
-                borderRadius: '16px',
-                fontSize: '15px',
-                fontWeight: 700,
-                color: '#1e2448',
-                outline: 'none',
-                fontFamily: 'monospace',
-                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.1)',
-              }}
+              className="pass-input-field"
             />
-            <div style={{ fontSize: '11.5px', color: '#64748b', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ fontSize: '12px', color: '#64748b', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Lock className="w-3.5 h-3.5" style={{ color: '#f59e0b' }} />
               <span>
                 {language === 'my'
@@ -515,10 +816,10 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
           </div>
 
           {/* Interactive Shield Energy Meter */}
-          <div style={{ background: '#ffffff', border: '2px solid #e0e7ff', borderRadius: '18px', padding: '16px' }}>
+          <div className="shield-meter-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: '#334155' }}>
-                {language === 'my' ? '🛡️ Byte ၏ ဒိုင်းကာစွမ်းအင်:' : "🛡️ Byte's Shield Energy:"}
+              <span style={{ fontSize: '13.5px', fontWeight: 800, color: '#334155' }}>
+                {language === 'my' ? '🛡️ Byte ၏ ဒိုင်းကာစွမ်းအင်:' : "🛡️ Byte's Shield Power:"}
               </span>
               <span
                 style={{
@@ -557,72 +858,16 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
       )}
 
       {/* =========================================================================
-          TYPE 5: CONDITION TESTER (IF/ELSE Visual Toggle)
+          TYPE 8: CODE SANDBOX (HTML/CSS/JS Playground)
           ========================================================================= */}
-      {activity.type === 'condition-tester' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div
-            style={{
-              background: '#0f172a',
-              borderRadius: '20px',
-              padding: '20px',
-              border: '2px solid #334155',
-              fontFamily: 'monospace',
-              fontSize: '13.5px',
-              color: '#e2e8f0',
-              lineHeight: 1.8,
-            }}
-          >
-            <div style={{ color: '#38bdf8', fontWeight: 800, marginBottom: '8px' }}>
-              // {language === 'my' ? 'အခြေအနေစမ်းသပ်မှု' : 'Condition Simulator'}
-            </div>
-            <div>
-              let isRaining ={' '}
-              <button
-                onClick={() => {
-                  const next = !conditionToggle;
-                  setConditionToggle(next);
-                  setCompleted(true);
-                  onCompleted?.();
-                }}
-                className={`kid-btn ${conditionToggle ? 'kid-btn-primary' : 'kid-btn-secondary'}`}
-                style={{ padding: '4px 14px', fontSize: '13px', borderRadius: '10px' }}
-              >
-                {conditionToggle ? '🌧️ true' : '☀️ false'} (Click to toggle)
-              </button>
-              ;
-            </div>
-            <div>if (isRaining) &#123;</div>
-            <div
-              style={{
-                paddingLeft: '24px',
-                color: conditionToggle ? '#67e8f9' : '#64748b',
-                fontWeight: conditionToggle ? 800 : 500,
-                background: conditionToggle ? 'rgba(6, 182, 212, 0.15)' : 'transparent',
-                borderRadius: '8px',
-                paddingTop: '2px',
-                paddingBottom: '2px',
-              }}
-            >
-              takeUmbrella(); // ☔️ Raincoat & umbrella on!
-            </div>
-            <div>&#125; else &#123;</div>
-            <div
-              style={{
-                paddingLeft: '24px',
-                color: !conditionToggle ? '#fde047' : '#64748b',
-                fontWeight: !conditionToggle ? 800 : 500,
-                background: !conditionToggle ? 'rgba(234, 179, 8, 0.15)' : 'transparent',
-                borderRadius: '8px',
-                paddingTop: '2px',
-                paddingBottom: '2px',
-              }}
-            >
-              wearSunglasses(); // 🕶️ Sunny hat & sunglasses on!
-            </div>
-            <div>&#125;</div>
-          </div>
-        </div>
+      {activity.type === 'code-sandbox' && (
+        <CodePlayground
+          initialHtml={activity.initialData?.html}
+          initialCss={activity.initialData?.css}
+          initialJs={activity.initialData?.js}
+          title={title}
+          language={language}
+        />
       )}
 
       {/* =========================================================================
@@ -630,12 +875,12 @@ export const InteractiveActivity: React.FC<InteractiveActivityProps> = ({
           ========================================================================= */}
       {completed && (
         <div className="celebration-box">
-          <ByteMascot mood="success" size={72} />
+          <ByteMascot mood="success" size={76} />
           <div>
-            <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#065f46', margin: '0 0 4px 0' }}>
+            <h4 style={{ fontSize: '17px', fontWeight: 800, color: '#065f46', margin: '0 0 4px 0' }}>
               {language === 'my' ? '🎉 သာဓုပါ! မစ်ရှင် အောင်မြင်သွားပါပြီ!' : '🎉 Awesome Job! Mission Completed!'}
             </h4>
-            <p style={{ fontSize: '13px', color: '#047857', margin: 0, fontWeight: 600 }}>
+            <p style={{ fontSize: '13.5px', color: '#047857', margin: 0, fontWeight: 600 }}>
               {language === 'my'
                 ? 'စက်ရုပ် Byte က သင့်ကို ဂုဏ်ယူနေပါတယ်! အောက်ပါ မေးခွန်းများကို ဆက်လက်ဖြေဆိုကြည့်ရအောင်။'
                 : 'Byte is super proud of you! Keep going to test your skills in the quiz below.'}

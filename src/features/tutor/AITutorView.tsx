@@ -1,186 +1,430 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '../../i18n/LanguageContext';
+import { useProgress } from '../../context/ProgressContext';
 import { audioService } from '../../services/audio/AudioService';
+import {
+  OpenRouterService,
+  ChatMessage,
+  OPENROUTER_MODELS
+} from '../../services/ai/openRouterService';
+import {
+  PROMPT_STARTERS,
+  PromptStarter,
+  getOfflineFallbackAnswer
+} from '../../services/ai/aiTutorKnowledge';
+import { ChatMessageItem } from './components/ChatMessageItem';
+import { ChatSettingsModal } from './components/ChatSettingsModal';
 
-interface TopicKnowledge {
-  titleMy: string;
-  titleEn: string;
-  bodyMy: string;
-  bodyEn: string;
-}
-
-const TUTOR_KNOWLEDGE_BASE: Record<string, TopicKnowledge> = {
-  algorithm: {
-    titleMy: 'Algorithm ဆိုတာ ဘာလဲ?',
-    titleEn: 'What is an algorithm?',
-    bodyMy: 'Algorithm (အယ်လဂိုရီသမ်) ဆိုတာ အလုပ်တစ်ခုကို အောင်မြင်အောင် လုပ်ဆောင်ဖို့ ရေးဆွဲထားတဲ့ အဆင့်လိုက် ညွှန်ကြားချက်တွေ ဖြစ်ပါတယ်။ ဥပမာ — မနက်ခင်း သွားတိုက်ဖို့ သွားတိုက်တံယူမယ်၊ သွားတိုက်ဆေးတင်မယ်၊ သွားတိုက်မယ်၊ ပါးလုတ်ကျင်းမယ် ဆိုတဲ့ အဆင့်တွေကို စနစ်တကျ လိုက်နာရသလိုပါပဲ!',
-    bodyEn: 'An algorithm is an ordered set of step-by-step instructions to solve a problem. Think of a recipe for baking cookies or the exact steps you take to tie your shoelaces!'
-  },
-  loop: {
-    titleMy: 'Loop ဆိုတာ ဘာလဲ?',
-    titleEn: 'What is a loop?',
-    bodyMy: 'Loop ဆိုတာ တူညီတဲ့ လုပ်ဆောင်ချက်တစ်ခု သို့မဟုတ် အများအပြားကို ထပ်ခါထပ်ခါ လုပ်စေဖို့ အသုံးပြုတာပါ။ ဥပမာ — သီချင်းတစ်ပုဒ်ကို ထပ်ခါတလဲလဲ ဖွင့်တာ ဒါမှမဟုတ် ကြယ် ၁၀ ပွင့်ကို တစ်ခုပြီးတစ်ခု ဆွဲဖို့ ကွန်ပျူတာကို Loop ပတ်ခိုင်းနိုင်ပါတယ်။',
-    bodyEn: 'A loop tells a computer to repeat a set of actions without having to write them over and over. For example, telling a game character to walk 10 steps using one repeat command instead of 10 separate ones!'
-  },
-  ai: {
-    titleMy: 'AI က ဘယ်လို သင်ယူသလဲ?',
-    titleEn: 'How does AI learn?',
-    bodyMy: 'AI (ဉာဏ်ရည်တု) စနစ်တွေဟာ လူသားတွေလိုပဲ ဥပမာတွေ၊ ဓာတ်ပုံတွေနဲ့ စာသား အမြောက်အမြားကို လေ့လာပြီး Pattern (ပုံစံတူများ) ကို ရှာဖွေသင်ယူပါတယ်။ အကယ်၍ သင်ပေးတဲ့ ဥပမာတွေမှာ အမှားပါနေရင် AI ကလည်း အမှားလုပ်တတ်တဲ့အတွက် လူသားတွေက အမြဲ ပြန်လည်စစ်ဆေးပေးဖို့ လိုအပ်ပါတယ်။',
-    bodyEn: 'AI models learn patterns by reviewing huge collections of examples (like thousands of pictures of cats and dogs). Because AI only knows what it has been taught, humans must always double-check its answers for safety and accuracy!'
-  },
-  bug: {
-    titleMy: 'Coding မှာ Bug ဆိုတာ ဘာလဲ?',
-    titleEn: 'What is a bug in code?',
-    bodyMy: 'Bug ဆိုတာ Program ထဲမှာ ဖြစ်ပေါ်နေတဲ့ အမှားအယွင်း သို့မဟုတ် ချို့ယွင်းချက်ကို ခေါ်တာပါ။ Bug ကို ရှာဖွေပြင်ဆင်တာကိုတော့ Debugging လို့ ခေါ်ပြီး Programmer တိုင်း နေ့စဉ် ရင်ဆိုင်ဖြေရှင်းရတဲ့ ပျော်စရာ ပဟေဠိတစ်ခု ဖြစ်ပါတယ်။',
-    bodyEn: 'A bug is an error or mistake in computer code that prevents a program from running correctly. Finding and fixing these mistakes is called "debugging" — it makes you a true coding detective!'
-  },
-  safety: {
-    titleMy: 'အွန်လိုင်းမှာ ဘယ်လို လုံခြုံမလဲ?',
-    titleEn: 'How do I stay safe online?',
-    bodyMy: 'အွန်လိုင်းမှာ လုံခြုံစေဖို့ ကိုယ့်ရဲ့ အမည်အပြည့်အစုံ၊ အိမ်လိပ်စာ၊ ကျောင်းအမည်၊ ဖုန်းနံပါတ်၊ Password တွေနဲ့ ဓာတ်ပုံတွေကို မသိသူတွေဆီ လုံးဝ မပေးပါနဲ့။ စိတ်မသက်မသာဖြစ်စရာ ဒါမှမဟုတ် မသင်္ကာစရာ တစ်ခုခု ကြုံတွေ့ရပါက ယုံကြည်ရတဲ့ မိဘ သို့မဟုတ် လူကြီးတစ်ယောက်ကို အမြဲ အသိပေးပါ။',
-    bodyEn: 'To stay safe online: never share private info like passwords, addresses, full names, or phone numbers with anyone you meet on the internet. If anything ever makes you feel uncomfortable, immediately tell a trusted adult or teacher!'
-  }
-};
+const STORAGE_CHAT_KEY = 'nyan_learn_chat_history';
 
 export const AITutorView: React.FC = () => {
-  const { lang, t } = useTranslation();
-  const [activeTopic, setActiveTopic] = useState<string>('algorithm');
-  const [customInput, setCustomInput] = useState('');
-  const [currentAnswer, setCurrentAnswer] = useState<{ title: string; body: string }>({
-    title: lang === 'my' ? TUTOR_KNOWLEDGE_BASE.algorithm.titleMy : TUTOR_KNOWLEDGE_BASE.algorithm.titleEn,
-    body: lang === 'my' ? TUTOR_KNOWLEDGE_BASE.algorithm.bodyMy : TUTOR_KNOWLEDGE_BASE.algorithm.bodyEn
-  });
+  const { lang } = useTranslation();
+  const { award } = useProgress();
 
-  const selectTopic = (topicKey: string) => {
-    setActiveTopic(topicKey);
-    const knowledge = TUTOR_KNOWLEDGE_BASE[topicKey];
-    if (knowledge) {
-      setCurrentAnswer({
-        title: lang === 'my' ? knowledge.titleMy : knowledge.titleEn,
-        body: lang === 'my' ? knowledge.bodyMy : knowledge.bodyEn
-      });
-      audioService.play('step');
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputText, setInputText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [streamingContent, setStreamingContent] = useState('');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [hasApiKey, setHasApiKey] = useState(false);
+  const [activeModelName, setActiveModelName] = useState('');
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Initialize and check key & load chat history
+  useEffect(() => {
+    checkKeyAndModel();
+
+    try {
+      const saved = localStorage.getItem(STORAGE_CHAT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+          return;
+        }
+      }
+    } catch {
+      // ignore
     }
+
+    // Default welcoming message
+    const initialGreeting: ChatMessage = {
+      id: 'welcome-msg',
+      role: 'assistant',
+      content: lang === 'my'
+        ? `မင်္ဂလာပါ! 🐱 ငါကတော့ Nyan Learn ရဲ့ AI သင်ယူမှုအဖော်မွန် **Nyan Bot (ဉာဏ်ဘော့)** ဖြစ်ပါတယ်။\n\nCoding၊ Algorithm၊ Loop၊ AI နည်းပညာ၊ ဆိုက်ဘာလုံခြုံရေး သို့မဟုတ် Robot Maze စွန့်စားခန်းတွေနဲ့ ပတ်သက်ပြီး ကြိုက်ရာ မေးမြန်းနိုင်ပါတယ်!\n\n💡 *အကြံပြုချက်: OpenRouter API ချိတ်ဆက်ထားရင် ပိုမိုစွမ်းဆောင်ရည်မြင့်မားတဲ့ AI အဖြေတွေကို ချက်ချင်း ရရှိနိုင်ပါတယ်!*`
+        : `Hello there! 🐱 I'm **Nyan Bot**, your friendly AI coding companion and tutor in Nyan Learn!\n\nYou can ask me anything about algorithms, loops, Python/JavaScript, AI literacy, online safety, or getting hints for the Robot Maze!\n\n💡 *Tip: Connect your free OpenRouter API Key in ⚙️ Settings to experience full real-time streaming intelligence!*`,
+      timestamp: Date.now()
+    };
+    setMessages([initialGreeting]);
+  }, [lang]);
+
+  // Persist messages to LocalStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        localStorage.setItem(STORAGE_CHAT_KEY, JSON.stringify(messages));
+      } catch {
+        // ignore
+      }
+    }
+  }, [messages]);
+
+  // Scroll to bottom on new message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, streamingContent]);
+
+  const checkKeyAndModel = () => {
+    const hasKey = OpenRouterService.hasApiKey();
+    setHasApiKey(hasKey);
+
+    const modelId = OpenRouterService.getModel();
+    const found = OPENROUTER_MODELS.find(m => m.id === modelId);
+    setActiveModelName(found ? found.name : modelId.split('/')[1] || modelId);
   };
 
-  const handleCustomQuestion = () => {
-    const query = customInput.trim().toLowerCase();
-    if (!query) {
-      selectTopic('algorithm');
-      return;
-    }
+  const handleSendMessage = async (textToSend?: string) => {
+    const prompt = (textToSend || inputText).trim();
+    if (!prompt || isLoading) return;
 
     audioService.play('step');
 
-    if (query.includes('loop') || query.includes('repeat') || query.includes('ထပ်')) {
-      selectTopic('loop');
-    } else if (query.includes('bug') || query.includes('error') || query.includes('အမှား')) {
-      selectTopic('bug');
-    } else if (query.includes('ai') || query.includes('learn') || query.includes('ဉာဏ်')) {
-      selectTopic('ai');
-    } else if (query.includes('safe') || query.includes('password') || query.includes('လုံခြုံ')) {
-      selectTopic('safety');
-    } else {
-      setActiveTopic('');
-      setCurrentAnswer({
-        title: lang === 'my'
-          ? `"${customInput}" အကြောင်း မေးခွန်းအတွက် ကျေးဇူးတင်ပါတယ်!`
-          : `Great question about "${customInput}"!`,
-        body: lang === 'my'
-          ? 'ဒီ Demo စနစ်တွင် ကလေးများ လုံခြုံရေးအတွက် ကြိုတင်စိစစ်ထားသော ပညာပေးအဖြေများကိုသာ အသုံးပြုထားပါတယ်။ Algorithm၊ Loop၊ AI၊ Bug နှင့် Online Safety စသည့် အဓိက ခေါင်းစဉ်များကို အပေါ်ရှိ ခလုတ်များမှတစ်ဆင့် အလွယ်တကူ လေ့လာနိုင်ပါတယ်!'
-          : 'In this child-safe prototype, all answers are locally simulated and curated to protect your privacy. You can tap the popular topic buttons above (Algorithm, Loop, AI, Bug, Online Safety) to explore fundamental coding concepts safely!'
-      });
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: prompt,
+      timestamp: Date.now()
+    };
+
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    setInputText('');
+    setIsLoading(true);
+    setStreamingContent('');
+
+    // Award XP on user questions
+    try {
+      award(5, null);
+    } catch {
+      // ignore
     }
 
-    setCustomInput('');
+    // Check if OpenRouter API Key is available
+    if (OpenRouterService.hasApiKey()) {
+      abortControllerRef.current = new AbortController();
+      let streamedAccumulator = '';
+
+      try {
+        await OpenRouterService.streamChat({
+          messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+          onChunk: (chunk) => {
+            streamedAccumulator += chunk;
+            setStreamingContent(streamedAccumulator);
+          },
+          signal: abortControllerRef.current.signal,
+          language: lang as 'en' | 'my'
+        });
+
+        audioService.play('correct');
+
+        const botMessage: ChatMessage = {
+          id: `bot-${Date.now()}`,
+          role: 'assistant',
+          content: streamedAccumulator || (lang === 'my' ? 'အဖြေ ပေးပို့မှု ပြီးဆုံးပါပြီ။' : 'Response complete.'),
+          timestamp: Date.now()
+        };
+        setMessages([...newMessages, botMessage]);
+      } catch (err: unknown) {
+        if ((err as Error).name === 'AbortError') {
+          // User cancelled
+          if (streamedAccumulator) {
+            const botMessage: ChatMessage = {
+              id: `bot-${Date.now()}`,
+              role: 'assistant',
+              content: streamedAccumulator + '\n\n*(Generation stopped by user)*',
+              timestamp: Date.now()
+            };
+            setMessages([...newMessages, botMessage]);
+          }
+        } else {
+          audioService.play('wrong');
+          const errorMsg = (err as Error).message || 'Failed to connect to OpenRouter API';
+          const errorNotice: ChatMessage = {
+            id: `err-${Date.now()}`,
+            role: 'assistant',
+            content: `⚠️ **OpenRouter API Error:**\n\n${errorMsg}\n\n💡 *Tap ⚙️ Settings at the top to check your API key, or switch to a free model like Gemini 2.0 Flash Lite:free.*`,
+            timestamp: Date.now()
+          };
+          setMessages([...newMessages, errorNotice]);
+        }
+      } finally {
+        setIsLoading(false);
+        setStreamingContent('');
+        abortControllerRef.current = null;
+      }
+    } else {
+      // Local Smart Fallback Mode (No API key required!)
+      setTimeout(() => {
+        const fallbackText = getOfflineFallbackAnswer(prompt, lang as 'en' | 'my');
+        audioService.play('star');
+        const botMessage: ChatMessage = {
+          id: `bot-${Date.now()}`,
+          role: 'assistant',
+          content: fallbackText,
+          timestamp: Date.now()
+        };
+        setMessages([...newMessages, botMessage]);
+        setIsLoading(false);
+      }, 500);
+    }
   };
 
+  const handleStopGeneration = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      audioService.play('click');
+    }
+  };
+
+  const handleClearChat = () => {
+    if (window.confirm(lang === 'my' ? 'စကားပြောမှတ်တမ်းအားလုံးကို ရှင်းလင်းမည်လား?' : 'Clear all chat messages?')) {
+      audioService.play('click');
+      const resetGreeting: ChatMessage = {
+        id: `greeting-${Date.now()}`,
+        role: 'assistant',
+        content: lang === 'my'
+          ? 'မှတ်တမ်းများ ရှင်းလင်းပြီးပါပြီ! 🐱 Coding သို့မဟုတ် AI အကြောင်း ဘာတွေ မေးမြန်းချင်ပါသလဲ?'
+          : 'Chat history cleared! 🐱 What would you like to explore today?',
+        timestamp: Date.now()
+      };
+      setMessages([resetGreeting]);
+      localStorage.removeItem(STORAGE_CHAT_KEY);
+    }
+  };
+
+  const handlePromptStarterClick = (starter: PromptStarter) => {
+    const text = lang === 'my' ? starter.promptMy : starter.promptEn;
+    handleSendMessage(text);
+  };
+
+  const filteredStarters = activeCategory === 'all'
+    ? PROMPT_STARTERS
+    : PROMPT_STARTERS.filter(s => s.category === activeCategory);
+
   return (
-    <div className="section-container">
-      <div className="card">
-        <div className="card-header">
-          <span className="card-icon">🤖</span>
-          <div>
-            <h2>{t('aiTutorTitle')}</h2>
-            <p className="card-subtitle">{t('aiTutorSubtitle')}</p>
+    <div className="section-container ai-tutor-container">
+      <div className="card chat-card-wrapper" style={{ padding: 0, overflow: 'hidden' }}>
+        {/* Chat Header */}
+        <header className="chat-main-header">
+          <div className="chat-header-identity">
+            <div className="chat-bot-avatar-badge">
+              <span className="bot-emoji">🐱</span>
+              <span className={`status-dot ${hasApiKey ? 'online' : 'demo'}`} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>
+                  Nyan Bot (ဉာဏ်ဘော့)
+                </h2>
+                <span className={`chat-model-tag ${hasApiKey ? 'tag-live' : 'tag-demo'}`}>
+                  {hasApiKey ? `⚡ ${activeModelName}` : '🛡️ Smart Demo Mode'}
+                </span>
+              </div>
+              <p style={{ margin: 0, fontSize: '12.5px', color: 'var(--ink-secondary)' }}>
+                {hasApiKey
+                  ? (lang === 'my' ? 'OpenRouter API ဖြင့် ချိတ်ဆက်ထားသည်' : 'Connected via OpenRouter API')
+                  : (lang === 'my' ? 'အခမဲ့ Demo စနစ် (OpenRouter Key ထည့်သွင်းနိုင်သည်)' : 'Demo Mode (Add your OpenRouter key for live AI)')}
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div className="simulation-notice-banner">
-          <span>🛡️</span>
-          <div>
-            <strong>
-              {lang === 'my'
-                ? 'ကလေးများအတွက် လုံခြုံစိတ်ချရသော Simulation စနစ်'
-                : 'Child-Safe Simulation Notice'}
-            </strong>
-            <p style={{ margin: 0, fontSize: '13px' }}>
-              {lang === 'my'
-                ? 'ဒီ AI Tutor သည် ပြင်ပဆာဗာသို့ အချက်အလက် မပို့ဘဲ ကြိုတင်စိစစ်ထားသော ပညာပေး အချက်အလက်များကိုသာ ဖော်ပြပေးပါသည်။'
-                : 'All responses are generated locally from a curated, kid-friendly educational knowledge base without external network calls.'}
-            </p>
+          <div className="chat-header-actions">
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={handleClearChat}
+              title="Clear chat history"
+              style={{ padding: '6px 12px', fontSize: '13px' }}
+            >
+              🧹 {lang === 'my' ? 'ရှင်းမည်' : 'Clear'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                audioService.play('step');
+                setIsSettingsOpen(true);
+              }}
+              title="OpenRouter Settings"
+              style={{ padding: '6px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <span>⚙️</span>
+              <span>{hasApiKey ? (lang === 'my' ? 'ဆက်တင်' : 'Settings') : (lang === 'my' ? 'Key ထည့်မည်' : 'Add API Key')}</span>
+            </button>
           </div>
-        </div>
+        </header>
 
-        <div style={{ marginTop: '20px' }}>
-          <p style={{ fontWeight: 800, marginBottom: '8px' }}>
-            {lang === 'my' ? 'လေ့လာလိုသော ခေါင်းစဉ်ကို ရွေးချယ်ပါ:' : 'Choose a topic to explore:'}
-          </p>
+        {/* Info Banner when no API Key is set */}
+        {!hasApiKey && (
+          <div className="chat-banner-notice">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '20px' }}>✨</span>
+              <div style={{ fontSize: '13px' }}>
+                <strong>
+                  {lang === 'my' ? 'OpenRouter API ချိတ်ဆက်ပြီး Live AI အသုံးပြုပါ!' : 'Connect OpenRouter API for Unlimited Live AI!'}
+                </strong>
+                <span style={{ marginLeft: '6px', opacity: 0.9 }}>
+                  {lang === 'my'
+                    ? 'Gemini 2.0, Llama 3.3, DeepSeek စသည့် Free Model များ အသုံးပြုရန် ညာဘက်ရှိ "Key ထည့်မည်" ကို နှိပ်ပါ။'
+                    : 'Get real-time streaming answers from Gemini 2.0, Llama 3.3 & DeepSeek. Free keys available!'}
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => setIsSettingsOpen(true)}
+              style={{ fontSize: '12px', padding: '4px 10px', whiteSpace: 'nowrap' }}
+            >
+              🔑 {lang === 'my' ? 'Key ထည့်သွင်းရန်' : 'Enter Key'}
+            </button>
+          </div>
+        )}
 
-          <div className="tutor-topic-chips" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
+        {/* Prompt Starter Chips Bar */}
+        <div className="chat-starters-section">
+          <div className="starters-category-tabs">
+            <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--ink-secondary)', marginRight: '6px' }}>
+              💡 {lang === 'my' ? 'အမြန်မေးခွန်းများ:' : 'Suggested Ideas:'}
+            </span>
             {[
-              { id: 'algorithm', label: 'Algorithm 📋' },
-              { id: 'loop', label: 'Loop 🔁' },
-              { id: 'ai', label: 'AI Learning 🤖' },
-              { id: 'bug', label: 'Bug & Debugging 🐛' },
-              { id: 'safety', label: 'Online Safety 🛡️' }
-            ].map(topic => (
+              { id: 'all', label: lang === 'my' ? 'အားလုံး' : 'All' },
+              { id: 'basics', label: 'Algorithms 📋' },
+              { id: 'loops', label: 'Loops 🔁' },
+              { id: 'ai', label: 'AI & ML 🤖' },
+              { id: 'safety', label: 'Safety 🛡️' },
+              { id: 'fun', label: 'Fun 😄' }
+            ].map(cat => (
               <button
-                key={topic.id}
+                key={cat.id}
                 type="button"
-                className={`btn ${activeTopic === topic.id ? 'btn-primary' : 'btn-outline'}`}
-                style={{ padding: '8px 14px', fontSize: '14px' }}
-                onClick={() => selectTopic(topic.id)}
+                className={`starter-filter-pill ${activeCategory === cat.id ? 'active' : ''}`}
+                onClick={() => {
+                  audioService.play('step');
+                  setActiveCategory(cat.id);
+                }}
               >
-                {topic.label}
+                {cat.label}
               </button>
             ))}
           </div>
 
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-            <input
-              type="text"
-              className="input-field"
-              placeholder={lang === 'my' ? 'မေးခွန်းတစ်ခုခု ရိုက်ထည့်ပါ (ဥပမာ - loop ဆိုတာ ဘာလဲ?)...' : 'Ask a question (e.g., what is a loop?)...'}
-              value={customInput}
-              onChange={(e) => setCustomInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleCustomQuestion()}
-              style={{ flex: 1, padding: '10px 14px', borderRadius: '12px', border: '2px solid #e2e8f0', fontSize: '14px' }}
+          <div className="starters-scroll-row">
+            {filteredStarters.map(starter => (
+              <button
+                key={starter.id}
+                type="button"
+                className="starter-chip"
+                onClick={() => handlePromptStarterClick(starter)}
+                disabled={isLoading}
+              >
+                <span className="starter-chip-icon">{starter.icon}</span>
+                <span className="starter-chip-text">
+                  {lang === 'my' ? starter.labelMy : starter.labelEn}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Chat Messages List */}
+        <div className="chat-messages-container" role="log" aria-live="polite">
+          {messages.map(msg => (
+            <ChatMessageItem key={msg.id} message={msg} />
+          ))}
+
+          {/* Active Streaming Message Preview */}
+          {isLoading && (
+            <ChatMessageItem
+              message={{
+                id: 'streaming-preview',
+                role: 'assistant',
+                content: streamingContent || (lang === 'my' ? 'စဉ်းစားနေပါသည်... 🐱💭' : 'Thinking... 🐱💭'),
+                timestamp: Date.now()
+              }}
+              isStreaming={true}
             />
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Bar */}
+        <footer className="chat-input-bar">
+          {isLoading && (
+            <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm stop-btn"
+                onClick={handleStopGeneration}
+                style={{ borderRadius: '999px', padding: '4px 14px', fontSize: '12px' }}
+              >
+                ⏹️ {lang === 'my' ? 'အဖြေရပ်မည်' : 'Stop generating'}
+              </button>
+            </div>
+          )}
+
+          <div className="chat-input-row">
+            <textarea
+              className="chat-textarea"
+              rows={1}
+              placeholder={
+                lang === 'my'
+                  ? 'Coding၊ AI၊ Maze အကြောင်း မေးမြန်းပါ... (Enter နှိပ်၍ ပို့ပါ)'
+                  : 'Ask Nyan Bot anything about coding, algorithms or AI... (Enter to send)'
+              }
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+              disabled={isLoading}
+            />
+
             <button
               type="button"
-              className="btn btn-primary"
-              onClick={handleCustomQuestion}
+              className="chat-send-btn"
+              onClick={() => handleSendMessage()}
+              disabled={!inputText.trim() || isLoading}
+              aria-label="Send message"
+              title="Send message"
             >
-              {lang === 'my' ? 'မေးမယ်' : 'Ask'}
+              {isLoading ? '⏳' : '🚀'}
             </button>
           </div>
 
-          <div className="tutor-answer-card" style={{ background: '#f8fafc', padding: '18px', borderRadius: '16px', border: '2px solid #e2e8f0' }}>
-            <div style={{ marginBottom: '8px' }}>
-              <span style={{ background: '#ede9fe', color: '#7c3aed', padding: '4px 10px', borderRadius: '999px', fontSize: '12px', fontWeight: 800 }}>
-                🤖 AI Tutor (Simulation)
-              </span>
-            </div>
-            <strong style={{ fontSize: '16px', display: 'block', marginBottom: '6px' }}>
-              {currentAnswer.title}
-            </strong>
-            <p style={{ margin: 0, color: 'var(--text-sub)', lineHeight: 1.6 }}>
-              {currentAnswer.body}
-            </p>
+          <div className="chat-input-footer-note">
+            <span>🛡️ 100% Kid-Safe & Privacy Protected</span>
+            <span>•</span>
+            <span>Powered by OpenRouter API</span>
           </div>
-        </div>
+        </footer>
       </div>
+
+      {/* Settings Modal */}
+      <ChatSettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        language={lang as 'en' | 'my'}
+        onSettingsSaved={checkKeyAndModel}
+      />
     </div>
   );
 };

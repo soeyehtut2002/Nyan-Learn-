@@ -121,6 +121,18 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onStart }) => {
             </button>
           </div>
         </article>
+
+        <article className="mission-card" style={{ borderColor: 'var(--cyan, #22c7d9)' }}>
+          <div className="mission-art">💬</div>
+          <h3>{t('stats.level') === 'အဆင့်' ? 'AI ဆရာ (Nyan Bot)' : 'Nyan Bot AI Tutor'}</h3>
+          <p>{t('stats.level') === 'အဆင့်' ? 'OpenRouter API စွမ်းအားသုံး AI Chatbot ဖြင့် Coding မေးခွန်းများကို အချိန်မရွေး မေးမြန်းပါ။' : 'Chat live with our AI mascot powered by OpenRouter API for real-time coding guidance.'}</p>
+          <div className="mission-foot">
+            <span className="xp-tag">⚡ +15 XP</span>
+            <button className="btn-secondary btn-sm" onClick={() => handleNav('tutor')}>
+              {t('stats.level') === 'အဆင့်' ? 'စကားပြောမည် 💬' : 'Chat with AI 💬'}
+            </button>
+          </div>
+        </article>
       </div>
     </div>
   );

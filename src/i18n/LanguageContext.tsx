@@ -31,8 +31,33 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const t = (key: string): string => {
-    const dict = dictionaries[lang] || dictionaries.en;
-    return (dict as Record<string, string>)[key] || (dictionaries.en as Record<string, string>)[key] || key;
+    const dict = (dictionaries[lang] || dictionaries.en) as Record<string, string>;
+    const enDict = dictionaries.en as Record<string, string>;
+
+    if (dict[key]) return dict[key];
+    if (enDict[key]) return enDict[key];
+
+    const aliases: Record<string, string> = {
+      kidSafePill: 'header.safety',
+      navHome: 'nav.home',
+      navMaze: 'nav.coding',
+      navQuiz: 'nav.quiz',
+      navAI: 'nav.ai',
+      navRewards: 'nav.rewards',
+      navPath: 'nav.path',
+      navBuilder: 'nav.builder',
+      navTutor: 'nav.tutor',
+      navParent: 'nav.parent',
+      safeLearningTitle: 'nav.safe_tip_title',
+      safeLearningDesc: 'nav.safe_tip_desc'
+    };
+
+    const mapped = aliases[key];
+    if (mapped) {
+      return dict[mapped] || enDict[mapped] || key;
+    }
+
+    return key;
   };
 
   return (

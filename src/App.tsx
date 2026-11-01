@@ -12,6 +12,7 @@ import { RewardsView } from './features/rewards/RewardsView';
 import { LearningPathView } from './features/path/LearningPathView';
 import { BlocklyBuilderView } from './features/blockly-builder/components/BlocklyBuilderView';
 import { AITutorView } from './features/tutor/AITutorView';
+import { FloatingAIChat } from './features/tutor/components/FloatingAIChat';
 import { ParentZoneView } from './features/parent/ParentZoneView';
 import { CourseMainView } from './features/courses/CourseMainView';
 
@@ -157,7 +158,7 @@ export const App: React.FC = () => {
               onClick={() => handleNavigate('tutor')}
             >
               <span className="ico">💬</span>
-              <span>{t('navTutor')}</span>
+              <span>{lang === 'my' ? 'AI ဆရာ (Nyan Bot)' : 'AI Tutor'}</span>
             </button>
             <button
               className={`nav-btn ${currentPage === 'parent' ? 'active' : ''}`}
@@ -195,6 +196,12 @@ export const App: React.FC = () => {
           {currentPage === 'parent' && <ParentZoneView />}
         </main>
       </div>
+
+      {/* Floating AI Chat Assistant (available across all screens) */}
+      <FloatingAIChat
+        currentPage={currentPage}
+        onOpenFullTutor={() => handleNavigate('tutor')}
+      />
 
       <footer className="footer" style={{ textAlign: 'center', marginTop: '40px', padding: '20px 0', borderTop: '1px solid #e2e8f0', color: 'var(--ink-secondary)', fontSize: '13px' }}>
         <p>Nyan Learn (ဉာဏ်လမ်း) — Empowering Young Creators with Playful Programming & AI Literacy 🚀</p>

@@ -9,7 +9,6 @@ import {
   CheckSquare,
   Award,
   RotateCcw,
-  ListOrdered,
   Layers,
   ChevronRight,
   ChevronLeft,
@@ -19,6 +18,7 @@ import { CourseData, LessonContent } from '../../../types/course.types';
 import { useProgress } from '../../../context/ProgressContext';
 import { VisualDiagram } from './VisualDiagram';
 import { InteractiveActivity } from './InteractiveActivity';
+import { WorkedExamplePlayer } from './WorkedExamplePlayer';
 import { ByteMascot } from './ByteMascot';
 
 interface LessonViewProps {
@@ -232,75 +232,10 @@ export const LessonView: React.FC<LessonViewProps> = ({
 
       {/* 6. WORKED EXAMPLE */}
       {workedExample && (
-        <section className="worked-example-card" style={{ border: '2px solid #bae6fd', borderRadius: '24px', padding: '24px', boxShadow: '0 8px 24px rgba(14, 165, 233, 0.08)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--cyan-light, #e4f9fc)', color: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 8px rgba(6, 182, 212, 0.2)' }}>
-                <ListOrdered className="w-5 h-5" />
-              </div>
-              <div>
-                <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#0284c7', letterSpacing: '0.05em' }}>
-                  {language === 'my' ? '🤖 လက်တွေ့ဥပမာ (လိုက်လုပ်ကြည့်ပါ)' : '🤖 Follow-Along Worked Example'}
-                </span>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--ink, #1e2448)', margin: '2px 0' }}>
-                  {workedExample.title}
-                </h3>
-              </div>
-            </div>
-            <ByteMascot mood="coder" size={56} />
-          </div>
-
-          <p style={{ fontSize: '14.5px', color: '#475569', marginBottom: '14px', lineHeight: 1.6 }}>
-            {workedExample.scenario}
-          </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {workedExample.steps.map((st) => (
-              <div
-                key={st.stepNumber}
-                style={{
-                  background: '#f8fafc',
-                  border: '1.5px solid #e2e8f0',
-                  borderRadius: '16px',
-                  padding: '14px 18px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '16px',
-                  flexWrap: 'wrap',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '10px',
-                      background: 'linear-gradient(135deg, #38bdf8, #0284c7)',
-                      color: '#ffffff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '13px',
-                      fontWeight: 800,
-                      flexShrink: 0,
-                      boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)',
-                    }}
-                  >
-                    {st.stepNumber}
-                  </span>
-                  <div style={{ fontSize: '14.5px', fontWeight: 700, color: 'var(--ink, #1e2448)', fontFamily: 'monospace' }}>
-                    {st.instruction}
-                  </div>
-                </div>
-
-                <div style={{ fontSize: '13px', color: '#0369a1', background: '#e0f2fe', padding: '6px 12px', borderRadius: '10px', fontWeight: 600 }}>
-                  💡 {st.outcome}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <WorkedExamplePlayer
+          workedExample={workedExample}
+          language={language}
+        />
       )}
 
       {/* 7. INTERACTIVE ACTIVITY / CODE PLAYGROUND */}
