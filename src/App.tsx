@@ -203,7 +203,7 @@ export const App: React.FC = () => {
         onOpenFullTutor={() => handleNavigate('tutor')}
       />
 
-      <footer className="footer" style={{ textAlign: 'center', marginTop: '40px', padding: '20px 0', borderTop: '1px solid #e2e8f0', color: 'var(--ink-secondary)', fontSize: '13px' }}>
+      <footer className="footer">
         <p>Nyan Learn (ဉာဏ်လမ်း) — Empowering Young Creators with Playful Programming & AI Literacy 🚀</p>
       </footer>
     </div>
